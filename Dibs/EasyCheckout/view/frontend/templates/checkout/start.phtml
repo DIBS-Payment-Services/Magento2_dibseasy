@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © 2009-2017 Vaimo Group. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+
+use Dibs\EasyCheckout\Block\Checkout;
+
+/**
+ * @var \Dibs\EasyCheckout\Block\Checkout  $block
+ */
+?>
+
+<script type="text/javascript" src="<?php echo $block->getDibsCheckoutJsUrl() ?>"></script>
+<div id="dibs-complete-checkout"></div>
+<script>
+    //<![CDATA[
+    var checkoutOptions = {
+        checkoutKey: '<?php echo $block->getCheckoutKey() ?>',
+        paymentId : '<?php echo $block->getPaymentId() ?>',
+        containerId : 'dibs-complete-checkout',
+        language: '<?php echo $block->getCheckoutLanguage() ?>',
+    };
+    var checkout = new Dibs.Checkout(checkoutOptions);
+
+    checkout.on('payment-completed', function(response) {
+        require(['Magento_Customer/js/customer-data', 'Magento_Customer/js/section-config'],
+                function(customerData, sectionsConfig) {
+                    var sections = sectionsConfig.getAffectedSections('<?php echo $block->getDibsCheckoutValidateUrl() ?>')
+                    customerData.invalidate(sections);
+                    window.location = '<?php echo $block->getDibsCheckoutValidateUrl() ?>';
+                }
+        );
+    });
+    //]]>
+</script>

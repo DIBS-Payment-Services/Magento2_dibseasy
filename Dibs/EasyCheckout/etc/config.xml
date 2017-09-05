@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2009-2017 Vaimo Group. All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <dibs_easy_checkout>
+                <active>0</active>
+                <model>Dibs\EasyCheckout\Model\Payment\Method\Checkout</model>
+                <title>Dibs Easy Checkout</title>
+                <payment_action>Authorization</payment_action>
+                <solution_type>Mark</solution_type>
+                <carrier>dibs_free_shipping</carrier>
+                <line_items_enabled>1</line_items_enabled>
+                <visible_on_cart>1</visible_on_cart>
+                <sort_order>1</sort_order>
+            </dibs_easy_checkout>
+        </payment>
+        <carriers>
+            <dibs_free_shipping>
+                <active>1</active>
+                <sallowspecific>0</sallowspecific>
+                <name>Fixed</name>
+                <price>0.00</price>
+                <type>I</type>
+                <handling_type>F</handling_type>
+                <model>Dibs\EasyCheckout\Model\Carrier\Free</model>
+                <title>Dibs Easy Free Shipping</title>
+            </dibs_free_shipping>
+        </carriers>
+    </default>
+</config>
