@@ -233,9 +233,10 @@ class Api
 
     protected function getShippingLine($shipping, $shippingReference, $shippingName)
     {
+        $name = preg_replace('/[^\w\d\s]*/','',$shippingName);
         $result = [
             'reference'         =>  $shippingReference,
-            'name'              =>  htmlentities($shippingName, ENT_QUOTES),
+            'name'              =>  $name,
             'quantity'          =>  1,
             'unit'              =>  1,
             'unitPrice'         =>  $this->getDibsIntVal($shipping->getShippingAmount()),
@@ -314,9 +315,10 @@ class Api
      */
     protected function getOrderLineItem( $item)
     {
+        $name = preg_replace('/[^\w\d\s]*/','',$item->getSku());
         $result = [
             'reference'         =>  $item->getSku(),
-            'name'              =>  htmlentities($item->getSku(), ENT_QUOTES),
+            'name'              =>  $name,
             'quantity'          =>  (int)$item->getQty(),
             'unit'              =>  1,
             'unitPrice'         =>  $this->getDibsIntVal($item->getPrice()),
