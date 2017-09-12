@@ -53,6 +53,7 @@ class Start extends \Magento\Framework\App\Action\Action {
     {
         return $this->checkoutHelper->getQuote();
     }
+
     /**
      * Execute view action
      *
@@ -60,7 +61,8 @@ class Start extends \Magento\Framework\App\Action\Action {
      */
     public function execute()
     {
-        if (!$this->config->isDibsEasyCheckoutAvailable($this->getQuote())){
+        $quote = $this->getQuote();
+        if (!$this->config->isDibsEasyCheckoutAvailable($quote) || count($quote->getAllItems()) == 0){
             return $this->resultRedirectFactory->create()->setPath('checkout/cart');
         }
         return $this->resultPageFactory->create();
