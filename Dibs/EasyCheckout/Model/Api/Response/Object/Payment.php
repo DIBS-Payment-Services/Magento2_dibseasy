@@ -5,6 +5,7 @@
  */
 namespace Dibs\EasyCheckout\Model\Api\Response\Object;
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer;
+use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\PaymentDetails;
 use Magento\Framework\DataObject;
 
 /**
@@ -49,7 +50,7 @@ class Payment {
         $this->created = new \DateTime($data['created']);
         $this->summary = new DataObject($data['summary']);
         $this->consumer = new Consumer($data['consumer']);
-        $this->paymentDetails = new DataObject($data['paymentDetails']);
+        $this->paymentDetails = new PaymentDetails($data['paymentDetails']);
         $this->orderDetails = new DataObject($data['orderDetails']);
         $this->checkout = new DataObject($data['checkout']);
         $this->refunds = isset($data['refunds']) ? new DataObject($data['refunds']) : null;
@@ -105,7 +106,7 @@ class Payment {
     }
 
     /**
-     * @return DataObject
+     * @return PaymentDetails|DataObject
      */
     public function getPaymentDetails()
     {

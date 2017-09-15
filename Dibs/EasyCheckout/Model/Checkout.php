@@ -6,6 +6,7 @@
 namespace Dibs\EasyCheckout\Model;
 
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment;
+use Magento\Framework\Validator\EmailAddress;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -157,6 +158,12 @@ class Checkout
         return $result;
     }
 
+    public function isValidEmail(Payment $payment)
+    {
+        $validator = new EmailAddress();
+        return $validator->isValid($payment->getPrivatePerson()->getData('email'));
+    }
+
     /**
      * @param Quote $quote
      *
@@ -196,7 +203,7 @@ class Checkout
             $this->prepareGuestQuote($quote);
         }
 
-        $this->updatePaymentMethod($quote,Config::PAYMENT_CHECKOUT_METHOD);
+        $this->updatePaymentMethod($quote, $payment, Config::PAYMENT_CHECKOUT_METHOD);
 
         $quoteDibsTotal = $this->api->getDibsIntVal($quote->getGrandTotal());
         $reservedDibsAmount = $payment->getSummary()->getData('reservedAmount');
@@ -333,14 +340,24 @@ class Checkout
 
     /**
      * @param Quote $quote
+     * @param Payment $payment
      * @param $methodCode
      *
      * @return $this
      */
-    public function updatePaymentMethod(Quote $quote, $methodCode)
+    public function updatePaymentMethod(Quote $quote, Payment $dibsPayment, $methodCode)
     {
         $payment = $quote->getPayment();
-        $payment->importData( ['method' => $methodCode]);
+        $paymentData = [
+            'method'=> $methodCode,
+        ];
+        $payment->importData($paymentData);
+
+        $payment->setData('dibs_easy_cc_masked_pan', $dibsPayment->getPaymentDetails()->getMaskedPan());
+        $payment->setData('cc_last_4',$dibsPayment->getPaymentDetails()->getCcLast4());
+        $payment->setData('cc_exp_month',$dibsPayment->getPaymentDetails()->getCcExpMonth());
+        $payment->setData('cc_exp_year',$dibsPayment->getPaymentDetails()->getCcExpYear());
+
         return $this;
     }
 

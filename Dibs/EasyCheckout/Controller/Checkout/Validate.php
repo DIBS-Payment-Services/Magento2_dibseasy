@@ -70,6 +70,14 @@ class Validate extends \Magento\Framework\App\Action\Action {
         try {
 
             $payment = $this->dibsApi->findPayment($paymentId);
+            $isValidEmail = $this->dibsCheckout->isValidEmail($payment);
+
+            if (!$isValidEmail){
+                $this->messageManager->addErrorMessage(__("Email is not valid"));
+                $this->dibsCheckout->resetDibsQuoteData($quote);
+
+                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+            }
 
             $isValidPayment = $this->dibsCheckout->validatePayment($quote, $payment);
             if ($isValidPayment) {

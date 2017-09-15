@@ -153,6 +153,13 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             throw new Exception(__('Transaction is not processed. Please contact administrator'));
         }
 
+        $dibsPayment = $this->getDibsPayment($invoice);
+
+        $payment->setData('dibs_easy_cc_masked_pan', $dibsPayment->getPaymentDetails()->getMaskedPan());
+        $payment->setData('cc_last_4',$dibsPayment->getPaymentDetails()->getCcLast4());
+        $payment->setData('cc_exp_month',$dibsPayment->getPaymentDetails()->getCcExpMonth());
+        $payment->setData('cc_exp_year',$dibsPayment->getPaymentDetails()->getCcExpYear());
+
         $payment->setStatus(self::STATUS_APPROVED);
         $payment->setTransactionId($chargeId)
             ->setIsTransactionClosed(1);
@@ -230,6 +237,19 @@ class Checkout extends \Magento\Payment\Model\Method\AbstractMethod
             $this->_logger->error($exception);
         }
         return $refundId;
+    }
+
+    /**
+     * @param $invoice
+     *
+     * @return Api\Response\Object\Payment|null
+     */
+    protected function getDibsPayment($invoice)
+    {
+        $paymentId = $invoice->getOrder()->getDibsEasyPaymentId();
+        $dibsPayment = $this->dibsApi->findPayment($paymentId);
+
+        return $dibsPayment;
     }
 
     /**
