@@ -353,6 +353,7 @@ class Checkout
         ];
         $payment->importData($paymentData);
 
+        $payment->setData('dibs_easy_payment_type', $dibsPayment->getPaymentDetails()->getPaymentType());
         $payment->setData('dibs_easy_cc_masked_pan', $dibsPayment->getPaymentDetails()->getMaskedPan());
         $payment->setData('cc_last_4',$dibsPayment->getPaymentDetails()->getCcLast4());
         $payment->setData('cc_exp_month',$dibsPayment->getPaymentDetails()->getCcExpMonth());

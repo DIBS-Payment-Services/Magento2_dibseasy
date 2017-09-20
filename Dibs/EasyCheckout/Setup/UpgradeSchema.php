@@ -43,15 +43,30 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment' => 'Dibs Easy Credit Card Masked Pan',
             ]);
 
-            /**
-             * 'anet_trans_method',
-            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            32,
-            [],
-            'Anet Trans Method'
-             */
+        }
 
-            $setup->endSetup();
+        if (version_compare($context->getVersion(), '0.2.1', '<')) {
+
+            $orderPaymentTable = $setup->getTable('sales_order_payment');
+
+            $quotePaymentTable = $setup->getTable('quote_payment');
+
+            $connection = $setup->getConnection();
+
+            $connection->addColumn($orderPaymentTable, 'dibs_easy_payment_type', [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => true,
+                'length' => 200,
+                'comment' => 'Dibs Easy Payment Type',
+            ]);
+
+            $connection->addColumn($quotePaymentTable, 'dibs_easy_payment_type', [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => true,
+                'length' => 200,
+                'comment' => 'Dibs Easy Payment Type',
+            ]);
+
         }
 
         $setup->endSetup();
