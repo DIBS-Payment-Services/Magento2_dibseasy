@@ -26,9 +26,9 @@ class Config
     const DEFAULT_CHECKOUT_LANGUAGE = 'en-GB';
 
     // For now we support only SEK
-    protected $_supportedCurrencies = ['SEK'];
+    protected $_supportedCurrencies = ['SEK','DKK','NOK'];
 
-    protected $_supportedLanguages = ['en-GB','sv-SE'];
+    protected $_supportedLanguages = ['en-GB','sv-SE','nb-NO','da-DK'];
 
     protected $scopeConfig;
 
