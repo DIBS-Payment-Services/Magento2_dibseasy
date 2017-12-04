@@ -10,31 +10,31 @@
         <section id="payment">
             <group id="dibs_easy_checkout" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Dibs Easy Checkout</label>
-                <field id="active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Dibs Easy Checkout</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="environment" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="environment" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Select Environment</label>
                     <source_model>Dibs\EasyCheckout\Model\Config\Source\Environment</source_model>
                 </field>
-                <field id="live_secret_key" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="live_secret_key" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Live Secret Key</label>
                 </field>
-                <field id="test_secret_key" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="test_secret_key" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Test Secret Key</label>
                 </field>
-                <field id="live_checkout_key" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="live_checkout_key" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Live Checkout Key</label>
                 </field>
-                <field id="test_checkout_key" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="test_checkout_key" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Test Checkout Key</label>
                 </field>
-                <field id="new_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="new_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>New Order Status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
-                <field id="carrier" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="carrier" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Shipping Carrier</label>
                     <source_model>Dibs\EasyCheckout\Model\Config\Source\Carrier</source_model>
                 </field>
