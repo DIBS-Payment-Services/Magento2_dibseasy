@@ -200,6 +200,12 @@ class Api
             ]
         ];
 
+        $termsUrl = $this->config->getTermsAndConditionsUrl();
+
+        if (!empty($termsUrl)){
+            $params['checkout']['termsUrl'] = $termsUrl;
+        }
+
         return $params;
     }
 

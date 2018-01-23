@@ -30,6 +30,11 @@
                 <field id="test_checkout_key" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Test Checkout Key</label>
                 </field>
+                <field id="terms_and_conditions_link" translate="label" type="text" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <validate>required-entry validate-url</validate>
+                    <label><![CDATA[Terms & Condition Link]]></label>
+                    <comment>Specify URL </comment>
+                </field>
                 <field id="new_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>New Order Status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
@@ -37,6 +42,18 @@
                 <field id="carrier" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Shipping Carrier</label>
                     <source_model>Dibs\EasyCheckout\Model\Config\Source\Carrier</source_model>
+                </field>
+            </group>
+        </section>
+        <section id="carriers">
+            <group id="dibs_free_shipping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Dibs Easy Free Shipping</label>
+                <field id="active" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Dibs Easy Free Shipping</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Method Title</label>
                 </field>
             </group>
         </section>

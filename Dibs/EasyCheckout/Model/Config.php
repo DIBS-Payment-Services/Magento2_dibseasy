@@ -15,6 +15,8 @@ class Config
 
     const DIBS_FREE_SHIPPING_METHOD_CODE = 'dibs_free_shipping';
 
+    const DIBS_TERMS_AND_CONDITIONS_CONFIG_KEY = 'terms_and_conditions_link';
+
     const API_ENVIRONMENT_TEST = 'test';
 
     const API_ENVIRONMENT_LIVE = 'live';
@@ -265,6 +267,15 @@ class Config
 
         return $language;
 
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTermsAndConditionsUrl()
+    {
+        $result = $this->getConfigParam(self::DIBS_TERMS_AND_CONDITIONS_CONFIG_KEY);
+        return $result;
     }
 
 

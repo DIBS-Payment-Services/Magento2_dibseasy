@@ -113,7 +113,6 @@ class Checkout extends Template
         return $this->config->getEasyCheckoutJsUrl();
     }
 
-
     /**
      * @return string
      */
