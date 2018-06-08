@@ -1,10 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
@@ -18,6 +12,8 @@
                 <line_items_enabled>1</line_items_enabled>
                 <visible_on_cart>1</visible_on_cart>
                 <sort_order>1</sort_order>
+                <terms_and_conditions_link_type>direct</terms_and_conditions_link_type>
+                <allowed_customer_types>B2C</allowed_customer_types>
             </dibs_easy_checkout>
         </payment>
         <carriers>

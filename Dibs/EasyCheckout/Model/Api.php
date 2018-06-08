@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model;
 
 use Dibs\EasyCheckout\Model\Api\Client;
@@ -21,29 +16,35 @@ class Api
 {
 
     /** @var Config  */
-    protected $config;
+    private $config;
 
     /** @var \Magento\Framework\UrlInterface  */
-    protected $urlBuilder;
+    private $urlBuilder;
 
+    /** @var Client  */
+    private $apiClient;
+
+    /**
+     * @var Payment
+     */
+    private $paymentService;
+
+    /**
+     * @var Refund
+     */
+    private $refundService;
+
+    /**
+     * Api constructor.
+     *
+     * @param Config $config
+     * @param \Magento\Framework\UrlInterface $urlBuilder
+     */
     public function __construct(Config $config, \Magento\Framework\UrlInterface $urlBuilder)
     {
         $this->config = $config;
         $this->urlBuilder = $urlBuilder;
     }
-
-    /** @var Client  */
-    protected $apiClient;
-
-    /**
-     * @var Payment
-     */
-    protected $paymentService;
-
-    /**
-     * @var Refund
-     */
-    protected $refundService;
 
     /**
      * @param Quote $quote
@@ -113,7 +114,7 @@ class Api
      */
     public function getPaymentService()
     {
-        if (is_null($this->paymentService)){
+        if (is_null($this->paymentService)) {
             $apiClient = $this->getApiClient();
             $this->paymentService = new Payment($apiClient);
         }
@@ -126,7 +127,7 @@ class Api
      */
     public function getRefundService()
     {
-        if (is_null($this->refundService)){
+        if (is_null($this->refundService)) {
             $apiClient = $this->getApiClient();
             $this->refundService = new Refund($apiClient);
         }
@@ -139,7 +140,7 @@ class Api
      */
     protected function getApiClient()
     {
-        if (is_null($this->apiClient)){
+        if (is_null($this->apiClient)) {
             $secretKey = $this->config->getSecretKey();
             $isTestEnvironment = $this->config->isTestEnvironmentEnabled();
             $this->apiClient = new Client($secretKey, $isTestEnvironment);
@@ -200,13 +201,57 @@ class Api
             ]
         ];
 
+        $this->setTermsAndConditionsUrl($params);
+        $this->setCustomerTypes($params);
+
+        return $params;
+    }
+
+    /**
+     * @param $params
+     *
+     * @return $this
+     */
+    private function setTermsAndConditionsUrl(&$params)
+    {
         $termsUrl = $this->config->getTermsAndConditionsUrl();
 
-        if (!empty($termsUrl)){
+        if (!empty($termsUrl)) {
             $params['checkout']['termsUrl'] = $termsUrl;
         }
 
-        return $params;
+        return $this;
+    }
+
+    /**
+     * @param $params
+     *
+     * @return $this
+     */
+    private function setCustomerTypes(&$params)
+    {
+        $multipleCustomerTypes = [
+            Config::DIBS_CUSTOMER_TYPE_ALL_B2C_DEFAULT,
+            Config::DIBS_CUSTOMER_TYPE_ALL_B2B_DEFAULT
+        ];
+
+        $customerTypesAllowed = $this->config->getAllowedCustomerTypes();
+        $default = $customerTypesAllowed;
+        if (in_array($customerTypesAllowed, $multipleCustomerTypes)) {
+            switch ($customerTypesAllowed) {
+                case Config::DIBS_CUSTOMER_TYPE_ALL_B2C_DEFAULT:
+                    $default = Config::DIBS_CUSTOMER_TYPE_B2C;
+                    break;
+                case Config::DIBS_CUSTOMER_TYPE_ALL_B2B_DEFAULT:
+                    $default = Config::DIBS_CUSTOMER_TYPE_B2B;
+                    break;
+            }
+        }
+
+        $params['checkout']['supportedConsumerTypes'] = str_replace('_', ',', $customerTypesAllowed);
+        $params['checkout']['defaultConsumerType'] = $default;
+
+        return $this;
     }
 
     /**
@@ -219,16 +264,15 @@ class Api
         $result = [];
         $items = $quote->getAllItems();
         /** @var \Magento\Quote\Model\Quote\Item $item */
-        foreach ($items as $item){
-            if ($this->isNotChargeable($item)){
+        foreach ($items as $item) {
+            if ($this->isNotChargeable($item)) {
                 continue;
             }
             $result[] = $this->getOrderLineItem($item);
-
         }
 
         $shippingAddress = $quote->getShippingAddress();
-        if ($shippingAddress->getShippingAmount() > 0){
+        if ($shippingAddress->getShippingAmount() > 0) {
             $shippingReference = $shippingAddress->getShippingMethod();
             $shippingName = $shippingAddress->getShippingDescription();
             $result[] = $this->getShippingLine($shippingAddress, $shippingReference, $shippingName);
@@ -239,7 +283,7 @@ class Api
 
     protected function getShippingLine($shipping, $shippingReference, $shippingName)
     {
-        $name = preg_replace('/[^\w\d\s]*/','',$shippingName);
+        $name = preg_replace('/[^\w\d\s]*/', '', $shippingName);
         $result = [
             'reference'         =>  $shippingReference,
             'name'              =>  $name,
@@ -270,20 +314,18 @@ class Api
                 continue;
             }
             $result[] = $this->getOrderLineItem($item);
-
         }
 
         $shippingInclTaxAmount = (double)$creditMemo->getShippingInclTax();
 
-        if ($shippingInclTaxAmount > 0){
+        if ($shippingInclTaxAmount > 0) {
             $shippingReference = $creditMemo->getOrder()->getShippingMethod();
             $shippingName = $creditMemo->getOrder()->getShippingDescription();
-            $result[] = $this->getShippingLine($creditMemo,$shippingReference, $shippingName);
+            $result[] = $this->getShippingLine($creditMemo, $shippingReference, $shippingName);
         }
 
         return $result;
     }
-
 
     /**
      * @param Invoice $invoice
@@ -295,12 +337,11 @@ class Api
         $result = [];
         $items = $invoice->getAllItems();
         /** @var Invoice\Item $item */
-        foreach ($items as $item){
-            if ($this->isNotChargeable($item->getOrderItem())){
+        foreach ($items as $item) {
+            if ( $this->isNotChargeable($item->getOrderItem()) ) {
                 continue;
             }
             $result[] = $this->getOrderLineItem($item);
-
         }
 
         $shippingInclTaxAmount = (double)$invoice->getShippingInclTax();
@@ -321,7 +362,7 @@ class Api
      */
     protected function getOrderLineItem( $item)
     {
-        $name = preg_replace('/[^\w\d\s]*/','',$item->getSku());
+        $name = preg_replace('/[^\w\d\s]*/', '', $item->getSku());
         $result = [
             'reference'         =>  $item->getSku(),
             'name'              =>  $name,
@@ -353,7 +394,7 @@ class Api
      *
      * @return bool
      */
-    protected function isNotChargeable( $item)
+    protected function isNotChargeable($item)
     {
         $result = false;
         if ($item->getParentItem()
@@ -373,7 +414,7 @@ class Api
      *
      * @return int
      */
-    protected function getItemTaxAmount( $item)
+    protected function getItemTaxAmount($item)
     {
         $itemTax = (double)$item->getTaxAmount();
         $result = $this->getDibsIntVal($itemTax);
@@ -386,7 +427,7 @@ class Api
      *
      * @return int
      */
-    protected function getItemGrossTotalAmount( $item)
+    protected function getItemGrossTotalAmount($item)
     {
         $itemGrossTotal = (double)$item->getRowTotalInclTax() - (double)$item->getDiscountAmount();
         $result = $this->getDibsIntVal($itemGrossTotal);

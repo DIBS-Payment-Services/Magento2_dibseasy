@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Api;
 
 /**
@@ -23,9 +18,9 @@ class Client {
 
     CONST API_TEST_SERVER_URL = 'https://test.api.dibspayment.eu';
 
-    protected $secretKey = '';
+    private $secretKey = '';
 
-    protected $apiServerUrl = '';
+    private $apiServerUrl = '';
 
     /**
      * Dibs_EasyPayment_Api_Client constructor.
@@ -39,10 +34,9 @@ class Client {
 
         $this->apiServerUrl = self::API_LIVE_SERVER_URL;
 
-        if ($isTestEnv){
+        if ($isTestEnv) {
             $this->apiServerUrl = self::API_TEST_SERVER_URL;
         }
-
     }
 
     /**
@@ -114,28 +108,25 @@ class Client {
             $response->setResponse(json_encode(['message'=> curl_error($ch)]));
         }
 
-        if ( empty($result) && $code != 200) {
+        if (empty($result) && $code != 200) {
             $response->setResponse(json_encode(['message'=> 'API Request Error ',$code]));
         }
 
-        if (in_array($code,[200,201,204])){
+        if (in_array($code, [200,201,204])) {
             $response->setSuccess(true);
         }
 
-        if ($response->getCode() == 400){
+        if ($response->getCode() == 400) {
             $errors = $response->getErrorMessages();
             $errors = implode(' ', $errors);
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Response($errors, 400);
         }
 
-        if (!$response->getSuccess()){
+        if (!$response->getSuccess()) {
             $message = $response->getMessage();
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Response($message, 500);
         }
 
         return$response;
     }
-
-
-
 }

@@ -1,7 +1,3 @@
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 define(
     [
         'uiComponent',

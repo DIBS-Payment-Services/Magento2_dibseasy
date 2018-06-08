@@ -1,28 +1,25 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Api\Service\Action\Payment;
+
 use Dibs\EasyCheckout\Model\Api\Service\Action\AbstractAction;
 
 /**
  * Class Create
  * @package Dibs\EasyCheckout\Model\Api\Service\Action\Payment
  */
-class Create extends AbstractAction {
+class Create extends AbstractAction
+{
 
-    protected $apiEndpoint = '/payments';
+    private $apiEndpoint = '/payments';
 
-    protected $orderFields = [
+    private $orderFields = [
         'items',
         'amount',
         'currency',
         'reference'
     ];
 
-    protected $orderItemFields = [
+    private $orderItemFields = [
         'reference',
         'name',
         'quantity',
@@ -34,12 +31,12 @@ class Create extends AbstractAction {
         'netTotalAmount'
     ];
 
-    protected $checkoutFields = ['url'];
+    private $checkoutFields = ['url'];
 
     /**
      * @return string
      */
-    protected function getApiEndpoint()
+    private function getApiEndpoint()
     {
         $url = $this->getClient()->getApiUrl() . $this->apiEndpoint;
         return $url;
@@ -66,7 +63,7 @@ class Create extends AbstractAction {
      * @return $this
      * @throws \Dibs\EasyCheckout\Model\Api\Exception\Response
      */
-    protected function validateResponse($response)
+    private function validateResponse($response)
     {
         $responseArray = $response->getResponseArray();
         if (!isset($responseArray['paymentId']) && !empty($responseArray['paymentId'])){
@@ -82,20 +79,20 @@ class Create extends AbstractAction {
      * @return $this
      * @throws \Dibs\EasyCheckout\Model\Api\Exception\Request
      */
-    protected function validateRequest($params)
+    private function validateRequest($params)
     {
         $missedParams = [];
 
-        if (!isset($params['order'])){
+        if (!isset($params['order'])) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Parameter order is missing'));
         }
 
-        foreach ($this->orderFields as $orderField){
-            if (!isset($params['order'][$orderField])){
+        foreach ($this->orderFields as $orderField) {
+            if (!isset($params['order'][$orderField])) {
                 $missedParams[] = $orderField;
             }
         }
-        if (!empty($missedParams)){
+        if (!empty($missedParams)) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order fields ') . implode(',',$missedParams));
         }
 
@@ -104,13 +101,13 @@ class Create extends AbstractAction {
         }
 
         $itemsTotal = 0;
-        foreach ($params['order']['items'] as $orderItem){
-            foreach ($this->orderItemFields as $orderItemField){
-                if (!isset($orderItem[$orderItemField])){
+        foreach ($params['order']['items'] as $orderItem) {
+            foreach ($this->orderItemFields as $orderItemField) {
+                if (!isset($orderItem[$orderItemField])) {
                     $missedParams[] = $orderItemField;
                 }
             }
-            if (!empty($missedParams)){
+            if (!empty($missedParams)) {
                 throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order item fields ') . implode(',',$missedParams));
             }
 
@@ -120,14 +117,6 @@ class Create extends AbstractAction {
         if ($itemsTotal != $params['order']['amount']) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Order amount not equal with items total amount'));
         }
-
-
-
         return $this;
-
     }
-
-
-
-
 }

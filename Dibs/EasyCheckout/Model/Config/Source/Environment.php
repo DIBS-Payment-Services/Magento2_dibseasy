@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Config\Source;
 
 use Dibs\EasyCheckout\Model\Config;
@@ -14,7 +9,6 @@ use Dibs\EasyCheckout\Model\Config;
  */
 class Environment implements \Magento\Framework\Option\ArrayInterface
 {
-
 
     /**
      * @return array

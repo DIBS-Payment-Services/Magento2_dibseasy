@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Config\Source;
 
 use Dibs\EasyCheckout\Model\Config;
@@ -16,10 +11,10 @@ class Carrier implements \Magento\Framework\Option\ArrayInterface
 {
 
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface  */
-    protected $scopeConfig;
+    private $scopeConfig;
 
     /** @var \Magento\Store\Model\StoreManagerInterface  */
-    protected $storeManager;
+    private $storeManager;
 
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
@@ -41,8 +36,7 @@ class Carrier implements \Magento\Framework\Option\ArrayInterface
             ['value' => Config::DIBS_FREE_SHIPPING_METHOD_CODE, 'label' => __('Dibs Easy Free Shipping')],
         ];
 
-
-        if ($this->isFlatrateActive()){
+        if ($this->isFlatrateActive()) {
 
             $label = $this->scopeConfig->getValue(
                 'carriers/flatrate/title',
@@ -59,7 +53,7 @@ class Carrier implements \Magento\Framework\Option\ArrayInterface
     /**
      * @return bool
      */
-    protected function isFlatrateActive()
+    private function isFlatrateActive()
     {
         $isFlatrateActive = $this->scopeConfig->isSetFlag(
             'carriers/flatrate/active',
@@ -73,7 +67,7 @@ class Carrier implements \Magento\Framework\Option\ArrayInterface
     /**
      * @return int
      */
-    protected function getStore()
+    private function getStore()
     {
         return $this->storeManager->getStore()->getId();
     }

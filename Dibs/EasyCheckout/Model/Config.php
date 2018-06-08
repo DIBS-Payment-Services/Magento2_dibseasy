@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model;
 
 /**
@@ -15,7 +11,15 @@ class Config
 
     const DIBS_FREE_SHIPPING_METHOD_CODE = 'dibs_free_shipping';
 
-    const DIBS_TERMS_AND_CONDITIONS_CONFIG_KEY = 'terms_and_conditions_link';
+    const DIBS_TERMS_CONDITIONS_CONFIG_LINK_TYPE_FIELD = 'terms_and_conditions_link_type';
+
+    const DIBS_TERMS_CONDITIONS_CONFIG_TYPE_DIRECT_FIELD = 'terms_and_conditions_link';
+
+    const DIBS_TERMS_CONDITIONS_CONFIG_TYPE_CMS_PAGE_FIELD = 'terms_and_conditions_link_cms';
+
+    const DIBS_TERMS_CONDITIONS_CONFIG_TYPE_DIRECT = 'direct';
+
+    const DIBS_TERMS_CONDITIONS_CONFIG_TYPE_CMS_PAGE = 'cms_page';
 
     const API_ENVIRONMENT_TEST = 'test';
 
@@ -27,14 +31,27 @@ class Config
 
     const DEFAULT_CHECKOUT_LANGUAGE = 'en-GB';
 
+    const DIBS_CUSTOMER_TYPE_B2B = 'B2B';
+
+    const DIBS_CUSTOMER_TYPE_B2C = 'B2C';
+
+    const DIBS_CUSTOMER_TYPE_ALL_B2B_DEFAULT = 'B2B_B2C';
+
+    const DIBS_CUSTOMER_TYPE_ALL_B2C_DEFAULT = 'B2C_B2B';
+
     // For now we support only SEK
     protected $_supportedCurrencies = ['SEK','DKK','NOK'];
 
     protected $_supportedLanguages = ['en-GB','sv-SE','nb-NO','da-DK'];
 
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface  */
     protected $scopeConfig;
 
+    /** @var \Magento\Store\Model\StoreManagerInterface  */
     protected $storeManager;
+
+    /** @var Magento\Cms\Helper\Page  */
+    protected $cmsPageHelper;
 
     /**
      * Config constructor.
@@ -44,10 +61,12 @@ class Config
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Cms\Helper\Page $cmsPageHelper
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
+        $this->cmsPageHelper = $cmsPageHelper;
     }
 
     /**
@@ -187,6 +206,15 @@ class Config
     }
 
     /**
+     * @return mixed
+     */
+    public function getAllowedCustomerTypes()
+    {
+        $result = $this->getConfigParam('allowed_customer_types');
+        return $result;
+    }
+
+    /**
      * @param $paramName
      *
      * @return mixed
@@ -274,11 +302,25 @@ class Config
      */
     public function getTermsAndConditionsUrl()
     {
-        $result = $this->getConfigParam(self::DIBS_TERMS_AND_CONDITIONS_CONFIG_KEY);
+        $result = '';
+        $linkType = $this->getConfigParam(self::DIBS_TERMS_CONDITIONS_CONFIG_LINK_TYPE_FIELD);
+        switch ($linkType) {
+            case self::DIBS_TERMS_CONDITIONS_CONFIG_TYPE_DIRECT:
+                $result = $this->getConfigParam(self::DIBS_TERMS_CONDITIONS_CONFIG_TYPE_DIRECT_FIELD);
+                break;
+            case self::DIBS_TERMS_CONDITIONS_CONFIG_TYPE_CMS_PAGE:
+                $cmsPageId = $this->getConfigParam(self::DIBS_TERMS_CONDITIONS_CONFIG_TYPE_CMS_PAGE_FIELD);
+                $result = $this->cmsPageHelper->getPageUrl($cmsPageId);
+                break;
+            default:
+                //Compatibility with older versions
+                $result = $this->getConfigParam(self::DIBS_TERMS_CONDITIONS_CONFIG_TYPE_DIRECT_FIELD);
+                break;
+
+        }
+
         return $result;
     }
-
-
 
 
 

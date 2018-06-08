@@ -1,10 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
--->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <section id="payment">
@@ -30,14 +24,34 @@
                 <field id="test_checkout_key" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Test Checkout Key</label>
                 </field>
+                <field id="terms_and_conditions_link_type" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <source_model>Dibs\EasyCheckout\Model\Config\Source\TermsConditions</source_model>
+                    <label><![CDATA[Terms & Condition Link Type]]></label>
+                </field>
                 <field id="terms_and_conditions_link" translate="label" type="text" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="0">
                     <validate>required-entry validate-url</validate>
-                    <label><![CDATA[Terms & Condition Link]]></label>
-                    <comment>Specify URL </comment>
+                    <label><![CDATA[Terms & Condition Direct Link]]></label>
+                    <comment>Specify URL</comment>
+                    <depends>
+                        <field id="terms_and_conditions_link_type">direct</field>
+                    </depends>
+                </field>
+                <field id="terms_and_conditions_link_cms" translate="label" type="select" sortOrder="79" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label><![CDATA[Terms & Condition Cms Page]]></label>
+                    <validate>required-entry</validate>
+                    <source_model>Magento\Cms\Model\Config\Source\Page</source_model>
+                    <comment>Select Cms Page</comment>
+                    <depends>
+                        <field id="terms_and_conditions_link_type">cms_page</field>
+                    </depends>
                 </field>
                 <field id="new_order_status" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>New Order Status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
+                <field id="allowed_customer_types" translate="label" type="select" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label><![CDATA[Allowed Customer Types]]></label>
+                    <source_model>Dibs\EasyCheckout\Model\Config\Source\CustomerTypes</source_model>
                 </field>
                 <field id="carrier" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Shipping Carrier</label>

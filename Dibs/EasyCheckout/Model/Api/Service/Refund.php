@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Api\Service;
 use Dibs\EasyCheckout\Model\Api\Client;
 use Dibs\EasyCheckout\Model\Api\Service;
@@ -12,12 +7,13 @@ use Dibs\EasyCheckout\Model\Api\Service;
  * Class Refund
  * @package Dibs\EasyCheckout\Model\Api\Service
  */
-class Refund extends Service {
+class Refund extends Service
+{
 
     /**
      * @var Action\Refund\Charge
      */
-    protected $charge;
+    private $charge;
 
     /**
      * Refund constructor.
@@ -41,6 +37,4 @@ class Refund extends Service {
         $result = $this->charge->request($chargeId, $params);
         return $result;
     }
-
-
 }

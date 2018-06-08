@@ -1,9 +1,6 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Response\Object\Payment;
+
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer\Address;
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer\Company;
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer\PrivatePerson;
@@ -12,19 +9,20 @@ use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer\PrivatePerson;
  * Class Consumer
  * @package Dibs\EasyCheckout\Model\Api\Response\Object\Payment
  */
-class Consumer {
+class Consumer
+{
 
     /** @var Address  */
-    protected $billingAddress;
+    private $billingAddress;
 
     /** @var Address  */
-    protected $shippingAddress;
+    private $shippingAddress;
 
     /** @var Company  */
-    protected $company;
+    private $company;
 
     /** @var PrivatePerson  */
-    protected $privatePerson;
+    private $privatePerson;
 
     /**
      * Consumer constructor.
@@ -70,7 +68,4 @@ class Consumer {
     {
         return $this->privatePerson;
     }
-
-
-
 }

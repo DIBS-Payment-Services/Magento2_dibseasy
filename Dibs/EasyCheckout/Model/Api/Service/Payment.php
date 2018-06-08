@@ -1,9 +1,6 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Service;
+
 use Dibs\EasyCheckout\Model\Api\Client;
 use Dibs\EasyCheckout\Model\Api\Service;
 
@@ -11,19 +8,20 @@ use Dibs\EasyCheckout\Model\Api\Service;
  * Class Payment
  * @package Dibs\EasyCheckout\Model\Api\Service
  */
-class Payment extends Service {
+class Payment extends Service
+{
 
     /** @var Action\Payment\Create  */
-    protected $create;
+    private $create;
 
     /** @var Action\Payment\Find  */
-    protected $find;
+    private $find;
 
     /** @var Action\Payment\Charge  */
-    protected $charge;
+    private $charge;
 
     /** @var Action\Payment\Cancel  */
-    protected $cancel;
+    private $cancel;
 
     /**
      * Payment constructor.
@@ -85,6 +83,4 @@ class Payment extends Service {
         $result = $this->cancel->request($paymentId, $params);
         return $result;
     }
-
-
 }

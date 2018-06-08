@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Response\Object\Payment;
 
 use Magento\Framework\DataObject;
@@ -11,19 +7,20 @@ use Magento\Framework\DataObject;
  * Class Payment
  * @package Dibs\EasyCheckout\Model\Api\Response\Object
  */
-class PaymentDetails {
+class PaymentDetails
+{
 
     /** @var  string */
-    protected $paymentType;
+    private $paymentType;
 
     /** @var  string */
-    protected $paymentMethod;
+    private $paymentMethod;
 
     /** @var DataObject|null  */
-    protected $invoiceDetails;
+    private $invoiceDetails;
 
     /** @var DataObject|null  */
-    protected $cardDetails;
+    private $cardDetails;
 
     /**
      * Dibs_EasyCheckout_Model_Api_Payment_Consumer constructor.
@@ -92,13 +89,12 @@ class PaymentDetails {
         $result = null;
         $maskedPan = $this->getMaskedPan();
 
-        if ($maskedPan != ''){
-            $result = substr($maskedPan,-4);
+        if ($maskedPan != '') {
+            $result = substr($maskedPan, -4);
         }
 
         return $result;
     }
-
 
     /**
      * @return null|string

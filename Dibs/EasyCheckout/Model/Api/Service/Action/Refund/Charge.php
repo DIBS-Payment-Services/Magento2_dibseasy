@@ -1,9 +1,6 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Service\Action\Refund;
+
 use Dibs\EasyCheckout\Model\Api\Exception\Response;
 use Dibs\EasyCheckout\Model\Api\Service\Action\AbstractAction;
 
@@ -11,16 +8,17 @@ use Dibs\EasyCheckout\Model\Api\Service\Action\AbstractAction;
  * Class Charge
  * @package Dibs\EasyCheckout\Model\Api\Service\Action\Refund
  */
-class Charge extends AbstractAction {
+class Charge extends AbstractAction
+{
 
-    protected $apiEndpoint = '/charges';
+    private $apiEndpoint = '/charges';
 
-    protected $orderFields = [
+    private $orderFields = [
         'amount',
         'orderItems'
     ];
 
-    protected $orderItemFields = [
+    private $orderItemFields = [
         'reference',
         'name',
         'quantity',
@@ -64,10 +62,10 @@ class Charge extends AbstractAction {
      * @return $this
      * @throws Response
      */
-    protected function validateResponse($response)
+    private function validateResponse($response)
     {
         $responseArray = $response->getResponseArray();
-        if (!isset($responseArray['refundId']) && !empty($responseArray['refundId'])){
+        if (!isset($responseArray['refundId']) && !empty($responseArray['refundId'])) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Response(__('PaymentId is empty'));
         }
 
@@ -80,11 +78,11 @@ class Charge extends AbstractAction {
      * @return $this
      * @throws \Dibs\EasyCheckout\Model\Api\Exception\Request
      */
-    protected function validateRequest($params)
+    private function validateRequest($params)
     {
         $missedParams = [];
 
-        if (!isset($params['amount'])){
+        if (!isset($params['amount'])) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Parameter amount is missing'));
         }
 
@@ -92,21 +90,17 @@ class Charge extends AbstractAction {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order items'));
         }
 
-        foreach ($params['orderItems'] as $orderItem){
-            foreach ($this->orderItemFields as $orderItemField){
-                if (!isset($orderItem[$orderItemField])){
+        foreach ($params['orderItems'] as $orderItem) {
+            foreach ($this->orderItemFields as $orderItemField) {
+                if (!isset($orderItem[$orderItemField])) {
                     $missedParams[] = $orderItemField;
                 }
             }
-            if (!empty($missedParams)){
+            if (!empty($missedParams)) {
                 throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order item fields ').implode(',',$missedParams));
             }
         }
 
         return $this;
-
     }
-
-
-
 }

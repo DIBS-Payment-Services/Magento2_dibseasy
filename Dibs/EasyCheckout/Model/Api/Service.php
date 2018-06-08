@@ -1,20 +1,17 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api;
 
 /**
  * Class Service
  * @package Dibs\EasyCheckout\Model\Api
  */
-class Service {
+class Service
+{
 
     /**
      * @var Client
      */
-    protected $client;
+    private $client;
 
     /**
      * Service constructor.
@@ -33,7 +30,4 @@ class Service {
     {
         return $this->client;
     }
-
-
-
 }

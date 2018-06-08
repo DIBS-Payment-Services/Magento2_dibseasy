@@ -1,9 +1,6 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Service\Action;
+
 use Dibs\EasyCheckout\Model\Api\Service;
 
 /**
@@ -14,7 +11,7 @@ abstract class AbstractAction
 {
 
     /** @var Service  */
-    protected $service;
+    private $service;
 
     /**
      * AbstractAction constructor.
@@ -41,8 +38,4 @@ abstract class AbstractAction
     {
         return $this->getService()->getClient();
     }
-
-
-
-
 }

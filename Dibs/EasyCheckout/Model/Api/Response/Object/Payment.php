@@ -1,9 +1,6 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Response\Object;
+
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\Consumer;
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment\PaymentDetails;
 use Magento\Framework\DataObject;
@@ -12,32 +9,32 @@ use Magento\Framework\DataObject;
  * Class Payment
  * @package Dibs\EasyCheckout\Model\Api\Response\Object
  */
-class Payment {
-
+class Payment
+{
 
     /** @var  string */
-    protected $paymentId;
+    private $paymentId;
 
     /** @var DataObject  */
-    protected $summary;
+    private $summary;
 
     /** @var Consumer  */
-    protected $consumer;
+    private $consumer;
 
     /** @var DataObject  */
-    protected $paymentDetails;
+    private $paymentDetails;
 
     /** @var DataObject  */
-    protected $orderDetails;
+    private $orderDetails;
 
     /** @var DataObject  */
-    protected $checkout;
+    private $checkout;
 
     /** @var null|DataObject  */
-    protected $refunds;
+    private $refunds;
 
     /** @var \DateTime  */
-    protected $created;
+    private $created;
 
     /**
      * Payment constructor.
@@ -54,7 +51,6 @@ class Payment {
         $this->orderDetails = new DataObject($data['orderDetails']);
         $this->checkout = new DataObject($data['checkout']);
         $this->refunds = isset($data['refunds']) ? new DataObject($data['refunds']) : null;
-
     }
 
     /**
@@ -141,5 +137,4 @@ class Payment {
     {
         return $this->summary;
     }
-
 }

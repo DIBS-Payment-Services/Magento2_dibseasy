@@ -1,9 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Api;
 use Magento\Framework\DataObject;
 
@@ -11,13 +6,14 @@ use Magento\Framework\DataObject;
  * Class Response
  * @package Dibs\EasyCheckout\Model\Api
  */
-class Response {
+class Response
+{
 
-    protected $code;
+    private $code;
 
-    protected $response;
+    private $response;
 
-    protected $success = false;
+    private $success = false;
 
     /**
      * DibsEasyPayment_Api_Response constructor.
@@ -84,7 +80,7 @@ class Response {
     {
         $result = '';
         $responseArray = $this->getResponseArray();
-        if (isset($responseArray['message'])){
+        if (isset($responseArray['message'])) {
             $result = $responseArray['message'];
         }
 
@@ -98,7 +94,7 @@ class Response {
     {
         $result = [];
         $responseArray = $this->getResponseArray();
-        if (isset($responseArray['errors'])){
+        if (isset($responseArray['errors'])) {
             $result = $responseArray['errors'];
         }
 
@@ -112,12 +108,11 @@ class Response {
     {
         $result = [];
         $errors = $this->getErrors();
-        foreach ($errors as $errorType){
-            foreach ($errorType as $error){
+        foreach ($errors as $errorType) {
+            foreach ($errorType as $error) {
                 $result[] = $error;
             }
         }
-
 
         return $result;
     }
@@ -139,8 +134,4 @@ class Response {
         $dataObject = new DataObject($this->getResponseArray());
         return $dataObject;
     }
-
-
-
-
 }

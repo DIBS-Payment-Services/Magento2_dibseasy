@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model;
 
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment;
@@ -112,7 +108,7 @@ class Checkout
      */
     public function createPaymentId(Quote $quote)
     {
-        if (!$quote->isVirtual()){
+        if (!$quote->isVirtual()) {
             $rate = $this->findShippingRate($quote);
             if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()){
                 $this->updateShippingMethod($quote);
@@ -121,7 +117,7 @@ class Checkout
 
         $paymentId = $this->api->createPayment($this->getQuote());
 
-        if ($paymentId){
+        if ($paymentId) {
             $quote->setDibsEasyPaymentId($paymentId);
             $quote->setDibsEasyGrandTotal($quote->getGrandTotal());
             $this->quoteRepository->save($quote);
@@ -187,14 +183,12 @@ class Checkout
     {
         $quote->collectTotals();
 
-
-
         $this->prepareQuoteShippingAddress($quote, $payment);
         $this->prepareQuoteBillingAddress($quote, $payment);
 
         if (!$quote->isVirtual()) {
             $rate = $this->findShippingRate($quote);
-            if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()){
+            if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()) {
                 $this->updateShippingMethod($quote);
             }
         }
@@ -211,7 +205,7 @@ class Checkout
         if ($quoteDibsTotal > $reservedDibsAmount) {
             $reservedDibsAmountRegular = $this->api->convertDibsValToRegular($reservedDibsAmount);
             $errorMessageText = 'Reserved payment amount is not correct. Reserved amount %s - order amount %s';
-            $message = __($errorMessageText,$reservedDibsAmountRegular, $quote->getGrandTotal());
+            $message = __($errorMessageText, $reservedDibsAmountRegular, $quote->getGrandTotal());
             throw new Exception($message);
         }
 
@@ -290,7 +284,7 @@ class Checkout
 
         $rate = $this->findShippingRate($quote);
 
-        if (!$rate){
+        if (!$rate) {
             throw new Exception(__('There is error. Please contact store administrator for details'));
         }
 

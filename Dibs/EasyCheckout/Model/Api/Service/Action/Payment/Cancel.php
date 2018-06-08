@@ -1,22 +1,18 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
-
 namespace Dibs\EasyCheckout\Model\Api\Service\Action\Payment;
+
 use Dibs\EasyCheckout\Model\Api\Service\Action\AbstractAction;
 
 /**
  * Class Cancel
  * @package Dibs\EasyCheckout\Model\Api\Service\Action\Payment
  */
-class Cancel extends AbstractAction {
+class Cancel extends AbstractAction
+{
 
+    private $apiEndpoint = '/payments';
 
-    protected $apiEndpoint = '/payments';
-
-    protected $orderItemFields = [
+    private $orderItemFields = [
         'reference',
         'name',
         'quantity',
@@ -33,7 +29,7 @@ class Cancel extends AbstractAction {
      *
      * @return string
      */
-    protected function getApiEndpoint($paymentId)
+    private function getApiEndpoint($paymentId)
     {
         $url = $this->getClient()->getApiUrl() . $this->apiEndpoint . '/' . $paymentId . '/cancels';
         return $url;
@@ -48,7 +44,7 @@ class Cancel extends AbstractAction {
     public function request($paymentId, $params)
     {
         $apiEndPoint = $this->getApiEndpoint($paymentId);
-        $response = $this->getClient()->request($apiEndPoint,'POST', $params);
+        $response = $this->getClient()->request($apiEndPoint, 'POST', $params);
         return $response;
     }
 
@@ -58,11 +54,11 @@ class Cancel extends AbstractAction {
      * @return $this
      * @throws \Dibs\EasyCheckout\Model\Api\Exception\Request
      */
-    protected function validateRequest($params)
+    private function validateRequest($params)
     {
         $missedParams = [];
 
-        if (!isset($params['amount'])){
+        if (!isset($params['amount'])) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Parameter amount is missing'));
         }
 
@@ -70,13 +66,13 @@ class Cancel extends AbstractAction {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order items'));
         }
 
-        foreach ($params['orderItems'] as $orderItem){
-            foreach ($this->orderItemFields as $orderItemField){
-                if (!isset($orderItem[$orderItemField])){
+        foreach ($params['orderItems'] as $orderItem) {
+            foreach ($this->orderItemFields as $orderItemField) {
+                if (!isset($orderItem[$orderItemField])) {
                     $missedParams[] = $orderItemField;
                 }
             }
-            if (!empty($missedParams)){
+            if (!empty($missedParams)) {
                 throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty order item fields ') . implode(',',$missedParams));
             }
         }
@@ -84,11 +80,4 @@ class Cancel extends AbstractAction {
         return $this;
 
     }
-
-
-
-
-
-
-
 }

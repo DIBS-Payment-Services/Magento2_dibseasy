@@ -1,26 +1,23 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Model\Api\Service\Action\Payment;
+
 use Dibs\EasyCheckout\Model\Api\Service\Action\AbstractAction;
 
 /**
  * Class Find
  * @package Dibs\EasyCheckout\Model\Api\Service\Action\Payment
  */
-class Find extends AbstractAction {
+class Find extends AbstractAction
+{
 
-
-    protected $apiEndpoint = '/payments';
+    private $apiEndpoint = '/payments';
 
     /**
      * @param $paymentId
      *
      * @return string
      */
-    protected function getApiEndpoint($paymentId)
+    private function getApiEndpoint($paymentId)
     {
         $url = $this->getClient()->getApiUrl() . $this->apiEndpoint. '/' . $paymentId;
         return $url;
@@ -34,11 +31,11 @@ class Find extends AbstractAction {
      */
     public function request($paymentId)
     {
-        if (empty($paymentId)){
+        if (empty($paymentId)) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Request(__('Empty paymentId'));
         }
         $apiEndPoint = $this->getApiEndpoint($paymentId);
-        $response = $this->getClient()->request($apiEndPoint,'GET');
+        $response = $this->getClient()->request($apiEndPoint, 'GET');
         $this->validateResponse($response);
         return $response;
     }
@@ -49,15 +46,14 @@ class Find extends AbstractAction {
      * @return $this
      * @throws \Dibs\EasyCheckout\Model\Api\Exception\Response
      */
-    protected function validateResponse($response)
+    private function validateResponse($response)
     {
         $responseArray = $response->getResponseArray();
-        if (!isset($responseArray['payment']) && !empty($responseArray['payment'])){
+        if (!isset($responseArray['payment']) && !empty($responseArray['payment'])) {
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Response(__('PaymentId is empty'));
         }
 
         return $this;
     }
-
 
 }

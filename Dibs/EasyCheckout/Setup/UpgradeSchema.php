@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright © 2009-2017 Vaimo Group. All rights reserved.
- * See LICENSE.txt for license details.
- */
 namespace Dibs\EasyCheckout\Setup;
 
 use Magento\Framework\Setup\UpgradeSchemaInterface;
@@ -42,7 +38,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'length' => 16,
                 'comment' => 'Dibs Easy Credit Card Masked Pan',
             ]);
-
         }
 
         if (version_compare($context->getVersion(), '0.2.1', '<')) {
@@ -66,7 +61,6 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'length' => 200,
                 'comment' => 'Dibs Easy Payment Type',
             ]);
-
         }
 
         $setup->endSetup();
