@@ -34,19 +34,26 @@ class Checkout extends Template
     /** @var \Magento\Framework\Message\ManagerInterface  */
     protected $messageManager;
 
+    protected $allmethods;
+
+    protected $currency;
+
 
     public function __construct(\Magento\Framework\View\Element\Template\Context $context,
                                 Config $config,
                                 \Magento\Checkout\Model\Session $checkoutSession,
                                 \Dibs\EasyCheckout\Model\Checkout $dibsCheckout,
-                                \Magento\Framework\Message\ManagerInterface $messageManager
+                                \Magento\Framework\Message\ManagerInterface $messageManager,
+                                \Magento\Shipping\Model\Config $allmethods,
+                                \Magento\Directory\Model\Currency $currency
     )
     {
         $this->dibsCheckout = $dibsCheckout;
         $this->config = $config;
         $this->checkoutSession = $checkoutSession;
         $this->messageManager = $messageManager;
-
+        $this->allmethods = $allmethods;
+        $this->currency = $currency;
         parent::__construct($context);
     }
 
@@ -60,19 +67,13 @@ class Checkout extends Template
         $quote = $this->getQuote();
 
         if (empty($quote->getDibsEasyPaymentId())){
-
             try {
-
-                $this->dibsCheckout->createPaymentId($quote);
-
+                 $this->dibsCheckout->createPaymentId($quote);
             } catch (\Exception $e) {
-
                 $this->_logger->error($e->getMessage());
             }
 
         }
-
-
         return $quote->getDibsEasyPaymentId();
     }
 
@@ -112,9 +113,20 @@ class Checkout extends Template
     /**
      * @return string
      */
+    public function getDibsUpdateCartUrlPattern()
+    {
+        return $this->config->getUpdateCartUrl();
+    }
+
+    /**
+     * @return string
+     */
     public function getDibsCheckoutValidateUrl()
     {
         return $this->getUrl('dibs_easy/checkout/validate');
     }
 
+    public function getCurrency() {
+        return $this->currency;
+    }
 }

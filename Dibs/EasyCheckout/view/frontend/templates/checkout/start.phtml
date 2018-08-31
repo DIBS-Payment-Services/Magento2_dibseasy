@@ -1,29 +1,39 @@
-<?php
-/**
- * @var \Dibs\EasyCheckout\Block\Checkout  $block
- */
-?>
-
 <script type="text/javascript" src="<?php echo $block->getDibsCheckoutJsUrl() ?>"></script>
-<div id="dibs-complete-checkout"></div>
-<script>
-    //<![CDATA[
-    var checkoutOptions = {
-        checkoutKey: '<?php echo $block->getCheckoutKey() ?>',
-        paymentId : '<?php echo $block->getPaymentId() ?>',
-        containerId : 'dibs-complete-checkout',
-        language: '<?php echo $block->getCheckoutLanguage() ?>',
-    };
-    var checkout = new Dibs.Checkout(checkoutOptions);
+<div id="checkout">  
+   <?php echo $block->getChildHtml('dibs.easy.checkout_cart'); ?>
+    <div id="dibs-easy-controls">
+       <!--Order summary -->
+       <div data-bind="scope: 'checkout'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+       </div>
+    </div>
+    <div id="dibs-easy-window">
+        <div id="dibs-complete-checkout"></div>
+    </div>
+    <div id="clear"></div>
+</div>
 
-    checkout.on('payment-completed', function(response) {
-        require(['Magento_Customer/js/customer-data', 'Magento_Customer/js/section-config'],
-                function(customerData, sectionsConfig) {
-                    var sections = sectionsConfig.getAffectedSections('<?php echo $block->getDibsCheckoutValidateUrl() ?>')
-                    customerData.invalidate(sections);
-                    window.location = '<?php echo $block->getDibsCheckoutValidateUrl() ?>';
+<script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "checkout": {
+                            "component": "Dibs_EasyCheckout/js/checkout",
+                            "template" : "Dibs_EasyCheckout/checkout/checkout",
+                            "checkout" : {"checkoutKey": "<?php echo $block->getCheckoutKey()?>", 
+                                          "paymentId": "<?php echo $block->getPaymentId() ?>",
+                                          "containerId": "dibs-complete-checkout",
+                                          "language": "<?php echo $block->getCheckoutLanguage() ?>",
+                                          "totals_url" : "<?= $block->getUrl('dibs_easy/checkout/totals')?>",
+                                          "shipping_url" : "<?= $block->getUrl('dibs_easy/checkout/shipping')?>",
+                                          "updatecart_url": "<?= $block->getUrl('dibs_easy/checkout/updatecart')?>"
+                              
+                              
+                              }
+                        }
+                    }
                 }
-        );
-    });
-    //]]>
+            }
+        }
 </script>

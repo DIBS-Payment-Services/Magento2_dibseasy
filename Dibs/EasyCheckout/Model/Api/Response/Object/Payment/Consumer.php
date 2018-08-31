@@ -31,10 +31,12 @@ class Consumer
      */
     public function __construct($data)
     {
-        $this->billingAddress = new Address($data['billingAddress']);
-        $this->shippingAddress = new Address($data['shippingAddress']);
-        $this->company = new Company($data['company']);
-        $this->privatePerson = new PrivatePerson($data['privatePerson']);
+         $address = new Address($data['shippingAddress']);
+         $this->shippingAddress = $address;
+          // set billing the same as shipping
+         $this->billingAddress = $address;
+         $this->company = new Company($data['company']);
+         $this->privatePerson = new PrivatePerson($data['privatePerson']);
     }
 
     /**

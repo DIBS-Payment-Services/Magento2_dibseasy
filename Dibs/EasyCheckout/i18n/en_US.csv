@@ -40,3 +40,6 @@
 "(B2C & B2B) Defaults to B2C","(B2C & B2B) Defaults to B2C"
 "(B2B & B2C) Defaults to B2B","(B2B & B2C) Defaults to B2B"
 "Allowed Customer Types","Allowed Customer Types"
+"Price", "Price"
+"Subtotal","Subtotal"
+"qty","qty"

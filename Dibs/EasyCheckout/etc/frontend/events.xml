@@ -11,5 +11,5 @@
     </event>
     <event name="sales_order_payment_capture">
         <observer name="dibs_set_invoice_to_payment_obj" instance="Dibs\EasyCheckout\Observer\SetInvoiceToPaymentObject"/>
-    </event>
+    </event>    
 </config>

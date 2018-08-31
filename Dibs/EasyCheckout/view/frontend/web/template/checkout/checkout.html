@@ -1,0 +1,31 @@
+<!-- Shipping Methods -->
+<div data-bind="if: shippingMethods().length">
+    <div id="dibs-easy-shipping-title" class="dibs-easy-ctrl-title">Shipping Methods</div>
+    <div id="dibs-easy-shipping-methods">
+        <div class="dibs-easy-shipping-method-wrapper" data-bind="foreach: shippingMethods">
+            <div data-bind="attr: {'id': $data.code, 'class': $data.clas}, click: $parent.shippingClick.bind($parent)"></div>
+            <div> <span data-bind="text: title"> </span> - <span data-bind="text: price"> </span></div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Order summary -->
+<div id="dibs-easy-ordersummary-title" class="dibs-easy-ctrl-title">Order Summary</div>
+<table> 
+    <tr> 
+        <td class="dibs-easy-totals-lable"><b>Subtotal:</b>
+        </td>  
+        <td class="dibs-easy-totals-total" data-bind="text: subtotal"><b> </b></td> 
+    </tr> 
+    <tr> 
+        <td class="dibs-easy-totals-lable"> Shipping:
+        </td>  
+        <td class="dibs-easy-totals-total" data-bind="text: shipping"></td> 
+    </tr>
+    <tr> 
+        <td class="dibs-easy-totals-lable"><b>Grand Total</b>
+        </td> 
+        <td id="dibs-easy-grand-total" class="dibs-easy-totals-total" data-bind="text: grand_total"></td>
+    </tr>
+</table>

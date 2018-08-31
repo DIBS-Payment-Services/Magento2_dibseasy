@@ -57,21 +57,17 @@ class Validate extends \Magento\Framework\App\Action\Action {
     public function execute()
     {
         $quote = $this->checkoutSession->getQuote();
-        $paymentId = $quote->getDibsEasyPaymentId();
-
+        $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
         if (empty($paymentId)){
             return $this->resultRedirectFactory->create()->setPath('checkout/cart');
         }
-
         try {
-
             $payment = $this->dibsApi->findPayment($paymentId);
+            $paymentAsArr = $this->dibsApi->findPaymentAsArray($paymentId);
             $isValidEmail = $this->dibsCheckout->isValidEmail($payment);
-
             if (!$isValidEmail){
                 $this->messageManager->addErrorMessage(__("Email is not valid"));
                 $this->dibsCheckout->resetDibsQuoteData($quote);
-
                 return $this->resultRedirectFactory->create()->setPath('checkout/cart');
             }
 
@@ -81,7 +77,6 @@ class Validate extends \Magento\Framework\App\Action\Action {
             } else {
                 $this->messageManager->addErrorMessage(__("The payment data and order data doesn't appear to match, please try again"));
                 $this->dibsCheckout->resetDibsQuoteData($quote);
-
                 return $this->resultRedirectFactory->create()->setPath('checkout/cart');
             }
 
@@ -96,8 +91,7 @@ class Validate extends \Magento\Framework\App\Action\Action {
             $this->dibsCheckout->resetDibsQuoteData($quote);
             return $this->resultRedirectFactory->create()->setPath('checkout/cart');
         }
-
-        return $this->resultRedirectFactory->create()->setPath('checkout/onepage/success', ['_secure' => true]);
+       return $this->resultRedirectFactory->create()->setPath('checkout/onepage/success', ['_secure' => true]);
     }
 
 }

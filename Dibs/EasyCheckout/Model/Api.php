@@ -34,16 +34,20 @@ class Api
      */
     private $refundService;
 
+    private $checkoutSession;
+
     /**
      * Api constructor.
      *
      * @param Config $config
      * @param \Magento\Framework\UrlInterface $urlBuilder
      */
-    public function __construct(Config $config, \Magento\Framework\UrlInterface $urlBuilder)
+    public function __construct(Config $config, \Magento\Framework\UrlInterface $urlBuilder,
+                                \Magento\Checkout\Model\Session $checkoutSession)
     {
         $this->config = $config;
         $this->urlBuilder = $urlBuilder;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -73,6 +77,13 @@ class Api
         $response = $paymentService->find($paymentId);
         $result = new \Dibs\EasyCheckout\Model\Api\Response\Object\Payment($response->getResponseDataObject()->getData('payment'));
         return $result;
+    }
+
+    public function findPaymentAsArray($paymentId) {
+        $result = null;
+        $paymentService = $this->getPaymentService();
+        $response = $paymentService->find($paymentId);
+        return json_decode($response->getResponse(), true);
     }
 
     /**
@@ -187,7 +198,7 @@ class Api
      *
      * @return array
      */
-    protected function getCreatePaymentParams(Quote $quote)
+    public function getCreatePaymentParams(Quote $quote)
     {
         $params = [
             'order' => [
@@ -198,14 +209,17 @@ class Api
             ],
             'checkout' => [
                 'url' => $this->urlBuilder->getUrl('dibs_easy/checkout/start'),
+                'shipping' => ['countries'=> [], 'merchantHandlesShippingCost' => true],
             ]
         ];
 
         $this->setTermsAndConditionsUrl($params);
         $this->setCustomerTypes($params);
 
+        $this->checkoutSession->setOrderItems(json_encode($params));
         return $params;
     }
+    
 
     /**
      * @param $params
@@ -234,7 +248,6 @@ class Api
             Config::DIBS_CUSTOMER_TYPE_ALL_B2C_DEFAULT,
             Config::DIBS_CUSTOMER_TYPE_ALL_B2B_DEFAULT
         ];
-
         $customerTypesAllowed = $this->config->getAllowedCustomerTypes();
         $default = $customerTypesAllowed;
         if (in_array($customerTypesAllowed, $multipleCustomerTypes)) {
@@ -247,10 +260,7 @@ class Api
                     break;
             }
         }
-
-        $params['checkout']['supportedConsumerTypes'] = str_replace('_', ',', $customerTypesAllowed);
-        $params['checkout']['defaultConsumerType'] = $default;
-
+        $params['checkout']['consumerType'] = ['supportedTypes' => explode('_',$customerTypesAllowed), 'default' => $default];
         return $this;
     }
 
@@ -278,6 +288,19 @@ class Api
             $result[] = $this->getShippingLine($shippingAddress, $shippingReference, $shippingName);
         }
 
+        return $result;
+    }
+
+    public function getCarcItems(Quote $quote) {
+        $result = [];
+        $items = $quote->getAllItems();
+        /** @var \Magento\Quote\Model\Quote\Item $item */
+        foreach ($items as $item) {
+            if ($this->isNotChargeable($item)) {
+                continue;
+            }
+            $result[] = $this->getOrderLineItem($item);
+        }
         return $result;
     }
 

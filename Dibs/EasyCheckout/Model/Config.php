@@ -29,6 +29,10 @@ class Config
 
     const DIBS_CHECKOUT_JS_LIVE = 'https://checkout.dibspayment.eu/v1/checkout.js?v=1';
 
+    const DIBS_UPDATE_CART_URL_PATTERN_TEST = 'https://test.api.dibspayment.eu/v1/payments/PAYMENTID/orderitems';
+
+    const DIBS_UPDATE_CART_URL_PATTERN_LIVE = 'https://api.dibspayment.eu/v1/payments/PAYMENTID/orderitems';
+
     const DEFAULT_CHECKOUT_LANGUAGE = 'en-GB';
 
     const DIBS_CUSTOMER_TYPE_B2B = 'B2B';
@@ -94,10 +98,7 @@ class Config
             default:
                 $result = '';
         }
-
-
         return $result;
-
     }
 
     /**
@@ -120,6 +121,26 @@ class Config
         return $result;
     }
 
+     /**
+     * @return mixed|string
+     */
+    public function getUpdateCartUrl()
+    {
+        $environment = $this->getEnvironment();
+        switch ($environment){
+            case self::API_ENVIRONMENT_TEST:
+                $result = self::DIBS_UPDATE_CART_URL_PATTERN_TEST;
+                break;
+            case self::API_ENVIRONMENT_LIVE:
+                $result = self::DIBS_UPDATE_CART_URL_PATTERN_LIVE;
+                break;
+            default:
+                $result = '';
+        }
+        return $result;
+    }
+
+
     /**
      * @return string
      */
@@ -136,8 +157,6 @@ class Config
             default:
                 $result = '';
         }
-
-
         return $result;
 
     }
@@ -177,6 +196,7 @@ class Config
         $result = $this->getConfigParam('test_checkout_key');
         return $result;
     }
+
 
     /**
      * @return mixed
