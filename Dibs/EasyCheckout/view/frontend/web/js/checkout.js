@@ -26,6 +26,7 @@ define(['uiComponent',
               var ct = this;
               this.checkoutinit.on('address-changed', function(address) {
                 var countryCode = address.countryCode;
+                console.log(countryCode);
                 switch (countryCode) {
                     case 'SWE':
                         countryCode = 'SE';
@@ -100,13 +101,18 @@ define(['uiComponent',
                    var parsed = JSON.parse(result);
                    var arr = [];
                    $.each(parsed, function( index, value){
-                       arr.push({title: value.carrier_title, price: value.price, code: value.code, clas: value.class});
+                       arr.push({title: value.carrier_title, price: value.price, code: value.code, active: value.active});
                    });
                    
-                   if(arr.lenth == 1) {
-                       console.log(arr);
+                   
+                   if(arr.length == 1) {
+                       var method = arr[0];
+                       arr = [];
+                       arr.push({title: method.title, price: method.price, 
+                                 code: method.code, active: 1});
+                             
+                       context.setShippingMethod(method.code);
                    }
-                       
                    context.shippingMethods(arr);
                    context.checkoutinit.thawCheckout();
             });

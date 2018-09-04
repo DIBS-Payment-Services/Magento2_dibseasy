@@ -3,7 +3,7 @@
     <div id="dibs-easy-shipping-title" class="dibs-easy-ctrl-title">Shipping Methods</div>
     <div id="dibs-easy-shipping-methods">
         <div class="dibs-easy-shipping-method-wrapper" data-bind="foreach: shippingMethods">
-            <div data-bind="attr: {'id': $data.code, 'class': $data.clas}, click: $parent.shippingClick.bind($parent)"></div>
+            <div data-bind="attr: {'id': $data.code, 'class': $data.active ? 'dibs-easy-shipping-selector dibs-easy-active' : 'dibs-easy-shipping-selector dibs-easy-non-active'   }, click: $parent.shippingClick.bind($parent)"></div>
             <div> <span data-bind="text: title"> </span> - <span data-bind="text: price"> </span></div>
             <div class="clear"></div>
         </div>

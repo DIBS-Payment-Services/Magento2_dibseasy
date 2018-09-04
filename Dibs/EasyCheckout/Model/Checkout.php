@@ -446,7 +446,15 @@ class Checkout
     }
 
     public function getShippingMethods($countryCode) {
+        
+        
+        $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
+        $payment = $this->api->findPayment($paymentId);
+        
         $quote = $this->checkoutSession->getQuote();
+        $this->prepareQuoteShippingAddress($quote, $payment);
+        $this->prepareQuoteBillingAddress($quote, $payment);
+        $this->quoteRepository->save($quote);
         $address = $quote->getShippingAddress();
         $address->collectShippingRates()->save();
         $rates = $address->getGroupedAllShippingRates();
@@ -456,15 +464,18 @@ class Checkout
             $store = $this->storeManager->getStore();
             $amountPrice = $store->getBaseCurrency()
                             ->convert($rate->getPrice(), $store->getCurrentCurrencyCode());
-            $active = 'dibs-easy-non-active';
-            if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 'dibs-easy-active';
+            $active = 0;
+            if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 1;
+            
+            
              $shippingMethodsArr[$rate->getCarrier()] = ['carrier_title' => $rate->getCarrierTitle(),
                                                         'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
                                                         'method_title' => $rate->getMethodTitle(),
                                                         'code' => $rate->getCode(),
-                                                        'active' => $active,
-                                                        'class' => 'dibs-easy-shipping-selector ' . $active];
+                                                        'active' => $active];
         }
+        
+       
        $shippingMethods = [];
        foreach($this->allmethods->getActiveCarriers() as $carrier)  {
              if($carrier->getConfigData('specificcountry')) {
@@ -481,6 +492,19 @@ class Checkout
                unset($shippingMethodsArr[$key]);
            }
        }
+       
+       //in process of changig address there 
+       //is no any metched shipping method, set DIBS free shipping
+       /*if(count($shippingMethodsArr) == 1) {
+           
+           $key = key($shippingMethodsArr);
+           $arr = $shippingMethodsArr[$key];
+           $arr['active'] = 1;
+           $shippingMethodsArr[$key] = $arr;
+           $this->updateCartShipping($arr['code']);
+       }*/
+       
+       
        return json_encode($shippingMethodsArr);
     }
 
