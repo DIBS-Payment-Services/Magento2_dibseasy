@@ -115,10 +115,10 @@ define(['uiComponent',
            shippingClick: function(item, event) {
                 context = this;  
                 $(".dibs-easy-shipping-selector").each(function() {
-                        $(this).addClass("non-active");
+                        $(this).addClass("dibs-easy-non-active");
                 });
-                $(event.target).removeClass("non-active");
-                $(event.target).addClass("active");
+                $(event.target).removeClass("dibs-easy-non-active");
+                $(event.target).addClass("dibs-easy-active");
                 this.checkoutinit.freezeCheckout();
                 this.setShippingMethod($(event.target).attr("id"));
            },
