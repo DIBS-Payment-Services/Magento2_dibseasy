@@ -456,8 +456,8 @@ class Checkout
             $store = $this->storeManager->getStore();
             $amountPrice = $store->getBaseCurrency()
                             ->convert($rate->getPrice(), $store->getCurrentCurrencyCode());
-            $active = 'non-active';
-            if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 'active';
+            $active = 'dibs-easy-non-active';
+            if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 'dibs-easy-active';
              $shippingMethodsArr[$rate->getCarrier()] = ['carrier_title' => $rate->getCarrierTitle(),
                                                         'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
                                                         'method_title' => $rate->getMethodTitle(),
