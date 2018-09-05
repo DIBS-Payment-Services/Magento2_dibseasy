@@ -185,7 +185,7 @@ class Checkout
     public function isValidEmail(Payment $payment)
     {
         $validator = new EmailAddress();
-        return $validator->isValid($payment->getPrivatePerson()->getData('email'));
+        return $validator->isValid($payment->getEmail());
     }
 
     /**
@@ -407,7 +407,7 @@ class Checkout
         $billingAddress->setPostcode($paymentBillingAddress->getData('postalCode'));
         $billingAddress->setCity($paymentBillingAddress->getData('city'));
         $billingAddress->setCountryId($country->getCountryId());
-        $billingAddress->setEmail($payment->getPrivatePerson()->getData('email'));
+        $billingAddress->setEmail($payment->getEmail());
         $billingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
         $billingAddress->setCompany($payment->getCompany()->getData('name'));
         if ($billingRegionCode) {
@@ -432,7 +432,7 @@ class Checkout
         $shippingAddress->setPostcode($payment->getShippingAddress()->getData('postalCode'));
         $shippingAddress->setCity($payment->getShippingAddress()->getData('city'));
         $shippingAddress->setCountryId($country->getCountryId());
-        $shippingAddress->setEmail($payment->getPrivatePerson()->getData('email'));
+        $shippingAddress->setEmail($payment->getEmail());
         $shippingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
         $shippingAddress->setCompany($payment->getCompany()->getData('name'));
         $shippingRegionCode = $payment->getShippingAddress()->getData('postalCode');

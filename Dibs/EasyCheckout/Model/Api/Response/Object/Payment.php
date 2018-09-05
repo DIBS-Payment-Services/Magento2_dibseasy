@@ -137,4 +137,13 @@ class Payment
     {
         return $this->summary;
     }
+    
+    public function getEmail() {
+        
+        $email = $this->getPrivatePerson()->getData('email'); 
+        if(!$email) {
+            $email = $this->getCompany()->getData('contactDetails')['email'];
+        }
+        return $email;
+    }
 }
