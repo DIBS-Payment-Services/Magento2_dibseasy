@@ -38,14 +38,16 @@ class Checkout extends Template
 
     protected $currency;
 
-
+    protected $quoteIdMaskFactory;
+    
     public function __construct(\Magento\Framework\View\Element\Template\Context $context,
                                 Config $config,
                                 \Magento\Checkout\Model\Session $checkoutSession,
                                 \Dibs\EasyCheckout\Model\Checkout $dibsCheckout,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 \Magento\Shipping\Model\Config $allmethods,
-                                \Magento\Directory\Model\Currency $currency
+                                \Magento\Directory\Model\Currency $currency,
+                                \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory
     )
     {
         $this->dibsCheckout = $dibsCheckout;
@@ -54,6 +56,8 @@ class Checkout extends Template
         $this->messageManager = $messageManager;
         $this->allmethods = $allmethods;
         $this->currency = $currency;
+        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
+        
         parent::__construct($context);
     }
 
@@ -65,7 +69,6 @@ class Checkout extends Template
     public function getPaymentId()
     {
         $quote = $this->getQuote();
-
         if (empty($quote->getDibsEasyPaymentId())){
             try {
                  $this->dibsCheckout->createPaymentId($quote);
@@ -128,5 +131,25 @@ class Checkout extends Template
 
     public function getCurrency() {
         return $this->currency;
+    }
+    
+    public function getShippingAddressId() {
+        $quote = $this->getQuote();
+        error_log('address_id' . $quote->getShippingAddress()->getId());
+        error_log('quote_id = ' . $quote->getId());
+        return $quote->getShippingAddress()->getId();
+    }
+    
+    public function getCartId() {
+        $quote = $this->getQuote();
+        return $quote->getId();
+    }
+    
+    public function getMaskedCartId() {
+        $quote = $this->getQuote();
+        $cartId = $quote->getId();
+        error_log($cartId);
+        return 123; //$this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
+        
     }
 }

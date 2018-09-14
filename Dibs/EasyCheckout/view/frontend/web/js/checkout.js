@@ -3,8 +3,9 @@ define(['uiComponent',
         'ko',
         'Magento_Ui/js/modal/confirm',
         'Magento_Checkout/js/model/full-screen-loader',
-        'mage/url'
-       ], function(Component, $, ko, confirm, fullScreenLoader, url) {
+        'mage/url',
+        'mage/storage'
+       ], function(Component, $, ko, confirm, fullScreenLoader, url, storage) {
 
         return Component.extend({
            shipping: ko.observable(''),
@@ -22,11 +23,11 @@ define(['uiComponent',
                     language: this.checkout.language
                 };
                 this.checkoutinit = new Dibs.Checkout(checkoutOptions);
-
+   
               var ct = this;
               this.checkoutinit.on('address-changed', function(address) {
                 var countryCode = address.countryCode;
-                console.log(countryCode);
+       
                 switch (countryCode) {
                     case 'SWE':
                         countryCode = 'SE';
@@ -45,8 +46,20 @@ define(['uiComponent',
                });
                 this.getTotals();
                 console.log(checkoutOptions);
-
-              $(".dibs-easy-remove-link-a").click(function(){
+                
+                //cartId
+               ///V1/carts/:cartId/shipping-methods
+                //V1/carts/mine/shipping-methods
+                //V1/guest-carts/:cartId/shipping-methods
+            
+           
+       
+       
+       
+                
+                
+                
+               $(".dibs-easy-remove-link-a").click(function(){
                 var id = $(this).attr("id");
                 confirm({
                     content: 'Delete this item ?',
@@ -113,6 +126,41 @@ define(['uiComponent',
                              
                        context.setShippingMethod(method.code);
                    }
+                   
+                   //http://magento2.local/rest/default/V1/guest-carts/7d46aaad2c79aed93a97fc573a06b19d/shipping-methods
+                   
+                   /*
+                   $.get('http://magento2.local/rest/default/V1/carts/mine/shipping-methods', function(data) {
+                       console.log(data);
+                   });*/
+                   
+                   
+                   
+                   
+                    storage.post(
+                        'http://magento2.local/rest/default/V1/carts/mine/estimate-shipping-methods-by-address-id',
+                        JSON.stringify({
+                            addressId: 277
+                        }),
+                        false
+                    ).done(function (result) {
+                      console.log(result);
+                    }).fail(function (response) {
+
+                    }).always(function () {
+
+                    }
+                    );
+                   
+                   
+                   
+                   
+                   /*
+                   $.post('http://magento2.local/rest/default/V1/carts/mine/estimate-shipping-methods',JSON.stringify({addressId: 2}), function( data ) {
+                         console.log(data);
+                   });
+                   */
+                   
                    context.shippingMethods(arr);
                    context.checkoutinit.thawCheckout();
             });

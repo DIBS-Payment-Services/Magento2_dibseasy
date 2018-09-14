@@ -447,10 +447,8 @@ class Checkout
 
     public function getShippingMethods($countryCode) {
         
-        
         $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
         $payment = $this->api->findPayment($paymentId);
-        
         $quote = $this->checkoutSession->getQuote();
         $this->prepareQuoteShippingAddress($quote, $payment);
         $this->prepareQuoteBillingAddress($quote, $payment);
@@ -459,22 +457,27 @@ class Checkout
         $address->collectShippingRates()->save();
         $rates = $address->getGroupedAllShippingRates();
         $shippingMethodsArr = [];
+     
         foreach($rates as $rate) {
-            $rate = current($rate);
-            $store = $this->storeManager->getStore();
-            $amountPrice = $store->getBaseCurrency()
+           //error_log(count($ratearr));
+           //foreach($ratearr as $rate) {
+                $rate = current($rate); 
+                //error_log()
+                $store = $this->storeManager->getStore();
+                $amountPrice = $store->getBaseCurrency()
                             ->convert($rate->getPrice(), $store->getCurrentCurrencyCode());
-            $active = 0;
-            if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 1;
-            
-            
-             $shippingMethodsArr[$rate->getCarrier()] = ['carrier_title' => $rate->getCarrierTitle(),
+                $active = 0;
+                if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 1;
+                $shippingMethodsArr[$rate->getCarrier()] = ['carrier_title' => $rate->getCarrierTitle(),
                                                         'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
                                                         'method_title' => $rate->getMethodTitle(),
                                                         'code' => $rate->getCode(),
                                                         'active' => $active];
+          //}
         }
-        
+       
+       error_log(print_r($shippingMethodsArr, true));
+       
        
        $shippingMethods = [];
        foreach($this->allmethods->getActiveCarriers() as $carrier)  {
@@ -521,7 +524,14 @@ class Checkout
                 ->setMethod($method);
         }
         $result = $this->getShippigRateById($method);
-        $shippingAddress->setShippingDescription(trim($result['shipping_description']));
+        
+        $sipping_description = '';
+        if(isset($result['shipping_description'])) {
+            $sipping_description = trim($result['shipping_description']);
+        }
+        $shippingAddress->setShippingDescription($sipping_description);
+        
+        
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
         $quote->setDibsEasyPaymentId($quote->getDibsEasyPaymentId());
