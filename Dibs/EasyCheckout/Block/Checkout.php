@@ -46,8 +46,7 @@ class Checkout extends Template
                                 \Dibs\EasyCheckout\Model\Checkout $dibsCheckout,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 \Magento\Shipping\Model\Config $allmethods,
-                                \Magento\Directory\Model\Currency $currency,
-                                \Magento\Quote\Model\QuoteIdMaskFactory $quoteIdMaskFactory
+                                \Magento\Directory\Model\Currency $currency
     )
     {
         $this->dibsCheckout = $dibsCheckout;
@@ -56,8 +55,6 @@ class Checkout extends Template
         $this->messageManager = $messageManager;
         $this->allmethods = $allmethods;
         $this->currency = $currency;
-        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
-        
         parent::__construct($context);
     }
 
