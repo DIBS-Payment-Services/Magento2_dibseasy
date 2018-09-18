@@ -42,23 +42,10 @@ define(['uiComponent',
                     //countryCode = 'SE';
                  }
                   ct.getShippingMethods(countryCode);
-                  ct.getTotals();
+                  //ct.getTotals();
                });
-                this.getTotals();
+                //this.getTotals();
                 console.log(checkoutOptions);
-                
-                //cartId
-               ///V1/carts/:cartId/shipping-methods
-                //V1/carts/mine/shipping-methods
-                //V1/guest-carts/:cartId/shipping-methods
-            
-           
-       
-       
-       
-                
-                
-                
                $(".dibs-easy-remove-link-a").click(function(){
                 var id = $(this).attr("id");
                 confirm({
@@ -108,16 +95,16 @@ define(['uiComponent',
            getShippingMethods: function(country) {
              context = this;  
               this.checkoutinit.freezeCheckout();
-             $.post(url.build('/dibs_easy/checkout/shipping') ,{countrycode: country}, function(){
+             $.get(url.build('/dibs_easy/checkout/shipping'), function(){
              
              }).done(function(result) {
                    var parsed = JSON.parse(result);
                    var arr = [];
                    $.each(parsed, function( index, value){
-                       arr.push({title: value.carrier_title, price: value.price, code: value.code, active: value.active});
+                       arr.push({title: value.method_title, price: value.price, code: value.code, active: value.active});
                    });
                    
-                   
+                   /*
                    if(arr.length == 1) {
                        var method = arr[0];
                        arr = [];
@@ -126,43 +113,11 @@ define(['uiComponent',
                              
                        context.setShippingMethod(method.code);
                    }
-                   
-                   //http://magento2.local/rest/default/V1/guest-carts/7d46aaad2c79aed93a97fc573a06b19d/shipping-methods
-                   
-                   /*
-                   $.get('http://magento2.local/rest/default/V1/carts/mine/shipping-methods', function(data) {
-                       console.log(data);
-                   });*/
-                   
-                   
-                   
-                   
-                    storage.post(
-                        'http://magento2.local/rest/default/V1/carts/mine/estimate-shipping-methods-by-address-id',
-                        JSON.stringify({
-                            addressId: 277
-                        }),
-                        false
-                    ).done(function (result) {
-                      console.log(result);
-                    }).fail(function (response) {
-
-                    }).always(function () {
-
-                    }
-                    );
-                   
-                   
-                   
-                   
-                   /*
-                   $.post('http://magento2.local/rest/default/V1/carts/mine/estimate-shipping-methods',JSON.stringify({addressId: 2}), function( data ) {
-                         console.log(data);
-                   });
                    */
                    
                    context.shippingMethods(arr);
                    context.checkoutinit.thawCheckout();
+                   context.getTotals();
             });
            },
 

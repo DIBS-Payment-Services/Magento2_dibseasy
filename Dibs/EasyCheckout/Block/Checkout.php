@@ -132,8 +132,6 @@ class Checkout extends Template
     
     public function getShippingAddressId() {
         $quote = $this->getQuote();
-        error_log('address_id' . $quote->getShippingAddress()->getId());
-        error_log('quote_id = ' . $quote->getId());
         return $quote->getShippingAddress()->getId();
     }
     

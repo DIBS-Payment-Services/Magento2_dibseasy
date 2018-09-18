@@ -83,6 +83,9 @@ class Api
         $result = null;
         $paymentService = $this->getPaymentService();
         $response = $paymentService->find($paymentId);
+        
+        error_log($response->getResponse());
+        
         return json_decode($response->getResponse(), true);
     }
 

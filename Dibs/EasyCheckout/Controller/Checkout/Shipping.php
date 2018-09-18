@@ -16,9 +16,6 @@ class Shipping extends \Magento\Framework\App\Action\Action {
     }
 
     public function execute() {
-       $post = $this->getRequest()->getPostValue();
-       if(isset($post['countrycode'])) {
-          echo $this->dibsCheckout->getShippingMethods($post['countrycode']);
-       }
+       echo $this->dibsCheckout->getShippingMethods();
    }
 }

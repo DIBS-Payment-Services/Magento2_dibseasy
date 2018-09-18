@@ -8,6 +8,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\ObjectManager;
+use Magento\Quote\Model\QuoteIdMaskFactory;
 
 
 /**
@@ -69,7 +70,10 @@ class Checkout
     private $storeManager;
 
     protected $currency;
-
+    
+    protected $quoteIdMaskFactory;
+    
+    protected $shippingManagement;
 
     /**
      * Checkout constructor.
@@ -102,7 +106,9 @@ class Checkout
                                 \Magento\Shipping\Model\Config $allmethods,
                                 \Magento\Quote\Model\Quote\Address\RateRequestFactory $rateRequestFactory,
                                  StoreManagerInterface $storeManager = null,
-                                \Magento\Directory\Model\Currency $currency
+                                \Magento\Directory\Model\Currency $currency,
+                                QuoteIdMaskFactory $quoteIdMaskFactory,
+                                \Magento\Quote\Model\ShippingMethodManagement $shippingManagement
     )
     {
         $this->api = $api;
@@ -121,6 +127,9 @@ class Checkout
         $this->rateRequestFactory = $rateRequestFactory;
         $this->storeManager = $storeManager ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
         $this->currency = $currency;
+        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
+        $this->shippingManagement = $shippingManagement;
+        
     }
 
     /**
@@ -133,12 +142,21 @@ class Checkout
         if (!$quote->isVirtual()) {
             $rate = $this->findShippingRate($quote);
             if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()){
-                $this->updateShippingMethod($quote);
+                //$this->updateShippingMethod($quote);
             }
         }
 
+        
         $paymentId = $this->api->createPayment($this->getQuote());
         $this->checkoutSession->setDibsEasyPaymentId($paymentId);
+        
+        
+        /*
+        $payment = $this->api->findPaymentAsArray('f2f6b184dd87475d8bd9a05aa40ef93e');
+        
+        error_log(print_r($payment, true));
+        */
+        
         if ($paymentId) {
             $quote->setDibsEasyPaymentId($paymentId);
             $quote->setDibsEasyGrandTotal($quote->getGrandTotal());
@@ -212,17 +230,6 @@ class Checkout
         $quote->collectTotals();
         $this->prepareQuoteShippingAddress($quote, $payment);
         $this->prepareQuoteBillingAddress($quote, $payment);
-        /*if (!$quote->isVirtual()) {
-            $rate = $this->findShippingRate($quote);
-            
-            var_dump($rate->getCode());
-            
-            exit;
-            if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()) {
-                $this->updateShippingMethod($quote);
-            }
-        }*/
-
         if ($this->getCheckoutMethod($quote) != \Magento\Checkout\Model\Type\Onepage::METHOD_CUSTOMER) {
             $this->prepareGuestQuote($quote);
         }
@@ -299,6 +306,9 @@ class Checkout
     /**
      * @param Quote $quote
      */
+        /**
+     * @param Quote $quote
+     */
     public function updateShippingMethod(Quote $quote)
     {
         $shippingAddress = $quote->getShippingAddress();
@@ -328,6 +338,9 @@ class Checkout
         $quote->collectTotals();
         $this->quoteRepository->save($quote);
     }
+
+    
+
     /**
      * @param Quote $quote
      *
@@ -338,6 +351,8 @@ class Checkout
         $result = null;
         $carrier = $this->config->getCarrier();
         $rates = $quote->getShippingAddress()->getShippingRatesCollection();
+        
+        
         /** @var Quote\Address\Rate $rate */
         foreach ($rates as $rate){
             if ($rate->getCarrier() == $carrier){
@@ -345,7 +360,9 @@ class Checkout
                 break;
             }
         }
-      return $result;
+        
+        
+        return $result;
     }
 
     /**
@@ -362,13 +379,11 @@ class Checkout
             'method'=> $methodCode,
         ];
         $payment->importData($paymentData);
-
         $payment->setData('dibs_easy_payment_type', $dibsPayment->getPaymentDetails()->getPaymentType());
         $payment->setData('dibs_easy_cc_masked_pan', $dibsPayment->getPaymentDetails()->getMaskedPan());
         $payment->setData('cc_last_4',$dibsPayment->getPaymentDetails()->getCcLast4());
         $payment->setData('cc_exp_month',$dibsPayment->getPaymentDetails()->getCcExpMonth());
         $payment->setData('cc_exp_year',$dibsPayment->getPaymentDetails()->getCcExpYear());
-
         return $this;
     }
 
@@ -445,93 +460,108 @@ class Checkout
         $shippingAddress->setShouldIgnoreValidation(true);
     }
 
-    public function getShippingMethods($countryCode) {
+    public function getShippingMethods() {
+        $quote = $this->checkoutSession->getQuote();
         
         $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
         $payment = $this->api->findPayment($paymentId);
-        $quote = $this->checkoutSession->getQuote();
+       
         $this->prepareQuoteShippingAddress($quote, $payment);
         $this->prepareQuoteBillingAddress($quote, $payment);
+        
         $this->quoteRepository->save($quote);
         $address = $quote->getShippingAddress();
         $address->collectShippingRates()->save();
-        $rates = $address->getGroupedAllShippingRates();
-        $shippingMethodsArr = [];
+        
      
-        foreach($rates as $rate) {
-           //error_log(count($ratearr));
-           //foreach($ratearr as $rate) {
-                $rate = current($rate); 
-                //error_log()
-                $store = $this->storeManager->getStore();
-                $amountPrice = $store->getBaseCurrency()
-                            ->convert($rate->getPrice(), $store->getCurrentCurrencyCode());
-                $active = 0;
-                if($this->checkoutSession->getDibsEasyShippingMethodCode() == $rate->getCode()) $active = 1;
-                $shippingMethodsArr[$rate->getCarrier()] = ['carrier_title' => $rate->getCarrierTitle(),
-                                                        'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
-                                                        'method_title' => $rate->getMethodTitle(),
-                                                        'code' => $rate->getCode(),
-                                                        'active' => $active];
-          //}
+        $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
+        
+        $quoteShippingMethodCode = $quote->getShippingAddress()->getShippingMethod();
+        
+        error_log('quote_id = ' . $quote->getId() . ' shipping_method = ' .  $quote->getShippingAddress()->getShippingMethod());
+        
+        // Set the first available shipping method 
+        if(empty($quoteShippingMethodCode) && !empty($shippingMethods)) {
+            
+            $method = current($shippingMethods);
+            $shippingMethodCode = $method->getCarrierCode() . '_' . $method->getMethodCode();
+            $this->setSippingMethod($shippingMethodCode);
+            error_log('Shipping method in quote = ' . $quote->getShippingAddress()->getShippingMethod());
+            
         }
+        
+        if($quoteShippingMethodCode && !empty($shippingMethods)) {
+            
+            if($this->getShippigMethodByCode($quoteShippingMethodCode)) {
+                error_log('Shipping method from quote is in the list of methods');
+            }else {
+                error_log('Shipping method from quote is NOT in the list of methods');
+                
+                
+            }
+            
+        }
+        
+        
+        $return = [];
+        foreach($shippingMethods as $method) {
+           $code = $method->getCarrierCode() . '_' . $method->getMethodCode();
+           $store = $this->storeManager->getStore();
+           $amountPrice = $store->getBaseCurrency()->convert($method->getAmount(), $store->getCurrentCurrencyCode());
+           $active = 0;  
+           if($quote->getShippingAddress()->getShippingMethod() == $code) $active = 1;
+           $return[$code] = ['carrier_title' => $method->getCarrierTitle(),
+                             'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
+                             'method_title' => $method->getMethodTitle(),
+                             'code' => $code,
+                             'active' => $active];
+         }  
        
-       error_log(print_r($shippingMethodsArr, true));
-       
-       
-       $shippingMethods = [];
-       foreach($this->allmethods->getActiveCarriers() as $carrier)  {
-             if($carrier->getConfigData('specificcountry')) {
-                  $specificCountries = explode(',',$carrier->getConfigData('specificcountry'));
-                 if(in_array($countryCode, $specificCountries)) {
-                     array_push($shippingMethods, $carrier->getCarrierCode());
-                 }
-             }else {
-                 array_push($shippingMethods, $carrier->getCarrierCode());
-             }
-       }
-       foreach($shippingMethodsArr as $key => $value) {
-           if(!in_array($key, $shippingMethods)) {
-               unset($shippingMethodsArr[$key]);
-           }
-       }
-       
-       //in process of changig address there 
-       //is no any metched shipping method, set DIBS free shipping
-       /*if(count($shippingMethodsArr) == 1) {
-           
-           $key = key($shippingMethodsArr);
-           $arr = $shippingMethodsArr[$key];
-           $arr['active'] = 1;
-           $shippingMethodsArr[$key] = $arr;
-           $this->updateCartShipping($arr['code']);
-       }*/
-       
-       
-       return json_encode($shippingMethodsArr);
+       return json_encode($return);
+    }
+    
+    public function getShippingMethodsBasedOnAddress($payment) {
+        $shippingAddress =  $this->getQuote()->getShippingAddress();
+        $country = $this->countryFactory->create()->loadByCode($payment->getShippingAddress()->getData('country'));
+        $shippingAddress->setFirstname($payment->getPrivatePerson()->getData('firstName'));
+        $shippingAddress->setLastname($payment->getPrivatePerson()->getData('lastName'));
+        $shippingAddress->setStreet($payment->getShippingAddress()->getStreetsArray());
+        $shippingAddress->setPostcode($payment->getShippingAddress()->getData('postalCode'));
+        $shippingAddress->setCity($payment->getShippingAddress()->getData('city'));
+        $shippingAddress->setCountryId($country->getCountryId());
+        $shippingAddress->setEmail($payment->getEmail());
+        $shippingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
+        $shippingAddress->setCompany($payment->getCompany()->getData('name'));
+        
+        $shippingAddress->setShouldIgnoreValidation(true);
+        $cartId = $this->getQuote()->getId();
+        $return = $this->shippingManagement->estimateByExtendedAddress($cartId, $shippingAddress);
+        foreach($return as $address) {
+            //error_log($address->getCarrierCode().'_'.$address->getMethodCode().$address->getAmount());
+        }
+        
+        return $return;
     }
 
-    public function setSippingMethod($method) {
+    public function setSippingMethod($methodCode) {
         $quote = $this->checkoutSession->getQuote();
         $shippingAddress = $quote->getShippingAddress();
         $shippingAddress->setCollectShippingRates(true);
         $shippingAddress->collectShippingRates();
-        $shippingAddress->setShippingMethod($method);
+        $shippingAddress->setShippingMethod($methodCode);
         $cartExtension = $quote->getExtensionAttributes();
         if ($cartExtension && $cartExtension->getShippingAssignments()) {
             $cartExtension->getShippingAssignments()[0]
                 ->getShipping()
-                ->setMethod($method);
+                ->setMethod($methodCode);
         }
-        $result = $this->getShippigRateById($method);
+        $result = $this->getShippigMethodByCode($methodCode);
         
         $sipping_description = '';
         if(isset($result['shipping_description'])) {
             $sipping_description = trim($result['shipping_description']);
         }
         $shippingAddress->setShippingDescription($sipping_description);
-        
-        
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
         $quote->setDibsEasyPaymentId($quote->getDibsEasyPaymentId());
@@ -547,7 +577,7 @@ class Checkout
            exit;
         }
         $this->setSippingMethod($shippingCode);
-        $res = $this->getShippigRateById($shippingCode);
+        $res = $this->getShippigMethodByCode($shippingCode);
         $shippingAmount = $res['amount'];
         $result = [];
         $shipAmount = $shippingAmount * 100;
@@ -570,7 +600,7 @@ class Checkout
         $url = $client->getApiUrl() . '/payments/' . $this->checkoutSession->getDibsEasyPaymentId() . '/orderitems';
         $rersponse = $client->request($url, 'PUT', $result);
         if(204 == $rersponse->getCode()) {
-           $shippingRates = $this->getShippigRateById($shippingCode);
+           $shippingRates = $this->getShippigMethodByCode($shippingCode);
            $result = ['status' => 'success',
                       'subtotal' => $this->currency->format($this->getQuote()->getSubtotal(),array('symbol' => ''), false, false), 
                       'grand_total' => $this->currency->format($this->getQuote()->getGrandTotal(), array('symbol' => ''), false, false),
@@ -584,7 +614,7 @@ class Checkout
         }
     }
 
-    public function getShippigRateById($shippingId) {
+    public function getShippigMethodByCode($shippingCode) {
         $quote = $this->checkoutSession->getQuote();
         $address = $quote->getShippingAddress();
         $address->collectShippingRates()->save();
@@ -592,14 +622,16 @@ class Checkout
         $shippingMethodsArr = [];
         $store = $this->storeManager->getStore();
         $result = [];
-        foreach($rates as $rate) {
-            $rate = current($rate);
-            if($shippingId == $rate->getCode()) {
-                
-                $result['amount'] = $amountPrice = $store->getBaseCurrency()
-                            ->convert($rate->getPrice(), $store->getCurrentCurrencyCode());
-                $result['carrier_name'] =$rate->getMethodTitle();
-                $result['shipping_description'] = $rate->getCarrierTitle() . ' - ' . $rate->getMethodTitle();
+        $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
+        $payment = $this->api->findPayment($paymentId);
+        $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
+        foreach($shippingMethods as $method) {
+            $code = $method->getCarrierCode() . '_' . $method->getMethodCode();
+            if($shippingCode == $code) {
+                $result['amount'] =  $store->getBaseCurrency()
+                            ->convert($method->getAmount(), $store->getCurrentCurrencyCode());
+                $result['carrier_name'] =$method->getMethodTitle();
+                $result['shipping_description'] = $method->getCarrierTitle() . ' - ' . $method->getMethodTitle();
                 return $result;
             }
         }
@@ -618,6 +650,5 @@ class Checkout
                       'shipping' =>  $current->getShippingDescription(),
                       'currency' => $this->getQuote()->getQuoteCurrencyCode()];
         return json_encode($result);
-
     }
 }
