@@ -8,8 +8,6 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Quote\Model\QuoteIdMaskFactory;
-
 
 /**
  * Class Checkout
@@ -107,7 +105,7 @@ class Checkout
                                 \Magento\Quote\Model\Quote\Address\RateRequestFactory $rateRequestFactory,
                                  StoreManagerInterface $storeManager = null,
                                 \Magento\Directory\Model\Currency $currency,
-                                QuoteIdMaskFactory $quoteIdMaskFactory,
+                           
                                 \Magento\Quote\Model\ShippingMethodManagement $shippingManagement
     )
     {
@@ -127,7 +125,7 @@ class Checkout
         $this->rateRequestFactory = $rateRequestFactory;
         $this->storeManager = $storeManager ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
         $this->currency = $currency;
-        $this->quoteIdMaskFactory = $quoteIdMaskFactory;
+      
         $this->shippingManagement = $shippingManagement;
         
     }
