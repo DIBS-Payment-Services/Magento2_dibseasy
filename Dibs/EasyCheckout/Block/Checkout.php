@@ -65,7 +65,6 @@ class Checkout extends Template
      */
     public function getPaymentId()
     {
-        xdebug_break();
         $quote = $this->getQuote();
         if (empty($quote->getDibsEasyPaymentId())){
             try {
