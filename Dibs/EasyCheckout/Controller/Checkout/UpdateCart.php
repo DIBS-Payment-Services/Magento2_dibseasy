@@ -18,7 +18,7 @@ class UpdateCart extends \Magento\Framework\App\Action\Action {
     public function execute() {
         $post = $this->getRequest()->getPostValue();
         if(isset($post['shipping_method'])) {
-            $this->dibsCheckout->updateCartShipping($post['shipping_method']);
+            echo $this->dibsCheckout->updateCartShipping($post['shipping_method']);
         }
 
         if(isset($post['remove_item_id'])) {

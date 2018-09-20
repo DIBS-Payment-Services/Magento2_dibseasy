@@ -566,10 +566,10 @@ class Checkout
                       'grand_total' => $this->currency->format($this->getQuote()->getGrandTotal(), array('symbol' => ''), false, false),
                       'shipping' => $shippingRates['carrier_name'],
                       'currency' => $this->getQuote()->getQuoteCurrencyCode()];
-           echo json_encode($result);
+           return  json_encode($result);
         } else {
            $result = ['status' => 'error'];
-           echo json_encode($result);
+           return json_encode($result);
         }
     }
 
