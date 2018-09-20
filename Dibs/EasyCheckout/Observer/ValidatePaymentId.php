@@ -28,8 +28,9 @@ class ValidatePaymentId implements ObserverInterface
 
         $grandTotal = (double)$quote->getGrandTotal();
         $dibsEasyGrandTotal = (double)$quote->getDibsEasyGrandTotal();
+        
         if ($grandTotal != $dibsEasyGrandTotal){
-            $quote->setDibsEasyPaymentId('');
+            //$quote->setDibsEasyPaymentId('');
         }
     }
 }

@@ -83,9 +83,6 @@ class Api
         $result = null;
         $paymentService = $this->getPaymentService();
         $response = $paymentService->find($paymentId);
-        
-        error_log($response->getResponse());
-        
         return json_decode($response->getResponse(), true);
     }
 
@@ -341,15 +338,12 @@ class Api
             }
             $result[] = $this->getOrderLineItem($item);
         }
-
         $shippingInclTaxAmount = (double)$creditMemo->getShippingInclTax();
-
         if ($shippingInclTaxAmount > 0) {
             $shippingReference = $creditMemo->getOrder()->getShippingMethod();
             $shippingName = $creditMemo->getOrder()->getShippingDescription();
             $result[] = $this->getShippingLine($creditMemo, $shippingReference, $shippingName);
         }
-
         return $result;
     }
 
