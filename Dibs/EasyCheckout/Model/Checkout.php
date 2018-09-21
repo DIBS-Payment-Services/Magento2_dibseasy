@@ -556,7 +556,8 @@ class Checkout
                               "grossTotalAmount"=> $shipAmount,
                               "netTotalAmount"=> 0]; 
         $result['shipping']['costSpecified'] = true;
-        $client = ObjectManager::getInstance()->create('\Dibs\EasyCheckout\Model\Api\Client', ['secretKey' =>  $this->config->getSecretKey()]);
+        $client = ObjectManager::getInstance()->create('\Dibs\EasyCheckout\Model\Api\Client',
+                    ['secretKey' =>  $this->config->getSecretKey(), 'isTestEnv' => $this->config->isTestEnvironmentEnabled()]);
         $url = $client->getApiUrl() . '/payments/' . $quote->getDibsEasyPaymentId() . '/orderitems';
         $rersponse = $client->request($url, 'PUT', $result);
         if(204 == $rersponse->getCode()) {

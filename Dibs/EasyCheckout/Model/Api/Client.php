@@ -78,14 +78,11 @@ class Client {
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
-
         if ('POST' === $method || 'PUT' === $method  && count($data) > 0) {
             curl_setopt( $ch, CURLOPT_POST, true );
             curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
-
         $response = $this->prepareResponse($ch);
-
         return$response;
     }
 
