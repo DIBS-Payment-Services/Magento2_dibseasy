@@ -4,8 +4,9 @@ define(['uiComponent',
         'Magento_Ui/js/modal/confirm',
         'Magento_Checkout/js/model/full-screen-loader',
         'mage/url',
-        'mage/storage'
-       ], function(Component, $, ko, confirm, fullScreenLoader, url, storage) {
+        'mage/storage',
+        'Magento_Checkout/js/model/cart/cache',
+       ], function(Component, $, ko, confirm, fullScreenLoader, url, storage, cartCache) {
 
         return Component.extend({
            shipping: ko.observable(''),
@@ -41,7 +42,24 @@ define(['uiComponent',
                 default:
                     //countryCode = 'SE';
                  }
-                  ct.getShippingMethods(countryCode);
+                 
+                  var shippingMethodfromCart = '';
+                  var cartData = cartCache.get('cart-data');
+                  
+                  if(typeof cartData.shippingCarrierCode !== 'undefined' && typeof cartData.shippingMethodCode !== 'undefined') {
+                       console.log(cartData);
+                  } else {
+                      console.log('empty cartdData');
+                  }
+                  
+                  //if(cartData.shippingCarrierCode !== 'undefined' && cartData.shippingMethodCode !== 'undefined') {
+                   //shippingMethodfromCart = cartData.shippingCarrierCode + '_' + cartData.shippingMethodCode;
+                   console.log(cartData);
+          
+                  //}
+                 
+                 
+                  ct.getShippingMethods(shippingMethodfromCart);
                   //ct.getTotals();
                });
                 //this.getTotals();
@@ -64,6 +82,9 @@ define(['uiComponent',
                     }
                    });
                 });
+                
+               
+                
             },
 
            incrementClickCounter: function() {
@@ -92,10 +113,10 @@ define(['uiComponent',
                 });
            },
 
-           getShippingMethods: function(country) {
+           getShippingMethods: function(cartShippingMethod) {
              context = this;  
               this.checkoutinit.freezeCheckout();
-             $.get(url.build('/dibs_easy/checkout/shipping'), function(){
+             $.post(url.build('/dibs_easy/checkout/shipping'), {"shippingMethod" : cartShippingMethod} ,function(){
              
              }).done(function(result) {
                    var parsed = JSON.parse(result);
@@ -121,7 +142,16 @@ define(['uiComponent',
             });
            },
 
-           shippingClick: function(item, event) {
+           setShippingMethod: function(shippingCode) {
+                 context = this;
+                 $.post(url.build('/dibs_easy/checkout/updatecart'),
+                    {"shipping_method": shippingCode}, function(data) {
+                }).done(function() {
+                    context.getTotals();
+                });
+           },
+           
+          shippingClick: function(item, event) {
                 context = this;  
                 $(".dibs-easy-shipping-selector").each(function() {
                         $(this).addClass("dibs-easy-non-active");
@@ -130,15 +160,6 @@ define(['uiComponent',
                 $(event.target).addClass("dibs-easy-active");
                 this.checkoutinit.freezeCheckout();
                 this.setShippingMethod($(event.target).attr("id"));
-           },
-
-           setShippingMethod: function(shippingCode) {
-                 context = this;
-                 $.post(url.build('/dibs_easy/checkout/updatecart'),
-                    {"shipping_method": shippingCode}, function(data) {
-                }).done(function() {
-                    context.getTotals();
-                });
            },
 
     });

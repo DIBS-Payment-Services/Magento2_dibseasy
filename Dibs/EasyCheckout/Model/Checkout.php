@@ -107,6 +107,7 @@ class Checkout
                                 \Magento\Directory\Model\Currency $currency,
                            
                                 \Magento\Quote\Model\ShippingMethodManagement $shippingManagement
+                             
     )
     {
         $this->api = $api;
@@ -125,7 +126,6 @@ class Checkout
         $this->rateRequestFactory = $rateRequestFactory;
         $this->storeManager = $storeManager ?: ObjectManager::getInstance()->get(StoreManagerInterface::class);
         $this->currency = $currency;
-      
         $this->shippingManagement = $shippingManagement;
         
     }
@@ -454,10 +454,19 @@ class Checkout
         $address->collectShippingRates()->save();
         $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
         $quoteShippingMethodCode = $quote->getShippingAddress()->getShippingMethod();
+        
+        error_log('lolol = ' . $this->checkoutSession->getCartShippingCarrierCode());
+        
         // Set the first available shipping method 
         if(empty($quoteShippingMethodCode) && !empty($shippingMethods)) {
             $method = current($shippingMethods);
             $shippingMethodCode = $method->getCarrierCode() . '_' . $method->getMethodCode();
+            if($this->checkoutSession->getCartShippingCarrierCode() && $this->checkoutSession->getCartShippingMethodCode()) {
+                $method = $this->checkoutSession->getCartShippingCarrierCode() . '_' . $this->checkoutSession->getCartShippingMethodCode();
+                if($this->getShippigMethodByCode($method)) {
+                    $shippingMethodCode = $method;
+                }
+            }
             $this->setSippingMethod($shippingMethodCode);
             $this->updateCartShipping($shippingMethodCode);
         }
