@@ -178,7 +178,6 @@ class Checkout
     {
         $result = false;
         if ($payment->getOrderDetails()->getData('amount') == $this->api->getDibsQuoteGrandTotal($quote)
-            //&& $payment->getOrderDetails()->getData('reference') == $quote->getId()
             && $payment->getPaymentId() ==  $this->checkoutSession->getDibsEasyPaymentId()
             && $payment->getOrderDetails()->getData('currency') == $quote->getQuoteCurrencyCode()
         ) {
@@ -455,8 +454,6 @@ class Checkout
         $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
         $quoteShippingMethodCode = $quote->getShippingAddress()->getShippingMethod();
         
-        error_log('lolol = ' . $this->checkoutSession->getCartShippingCarrierCode());
-        
         // Set the first available shipping method 
         if(empty($quoteShippingMethodCode) && !empty($shippingMethods)) {
             $method = current($shippingMethods);
@@ -470,14 +467,6 @@ class Checkout
             $this->setSippingMethod($shippingMethodCode);
             $this->updateCartShipping($shippingMethodCode);
         }
-        if($quoteShippingMethodCode && !empty($shippingMethods)) {
-            if($this->getShippigMethodByCode($quoteShippingMethodCode)) {
-                error_log('Shipping method from quote is in the list of methods');
-            }else {
-                error_log('Shipping method from quote is NOT in the list of methods');
-            }
-        }
-        
         
         $return = [];
         foreach($shippingMethods as $method) {
@@ -508,11 +497,9 @@ class Checkout
         $shippingAddress->setEmail($payment->getEmail());
         $shippingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
         $shippingAddress->setCompany($payment->getCompany()->getData('name'));
-        
         $shippingAddress->setShouldIgnoreValidation(true);
         $cartId = $this->getQuote()->getId();
         $return = $this->shippingManagement->estimateByExtendedAddress($cartId, $shippingAddress);
-       
         return $return;
     }
 

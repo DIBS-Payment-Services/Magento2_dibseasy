@@ -1,4 +1,3 @@
-
 <h1 class="page-title"> Cart items</h1>
 <table>
     <thead class="cart-thead">
@@ -11,15 +10,15 @@
         </tr>
     </thead>
 <?php foreach($block->getCartItems() as $item) : ?>
-    <tr class="dibs-easy-cart-row"> 
-         <td class="dibs-easy-thumb-td"> <div class="dibs-easy-product-thumbnail"> 
-                <?= $block->getImage($item->getProduct(), 'cart_page_product_thumbnail')->toHtml()?> 
-            </div> 
+    <tr class="dibs-easy-cart-row">
+         <td class="dibs-easy-thumb-td"> <div class="dibs-easy-product-thumbnail">
+                <?= $block->getImage($item->getProduct(), 'cart_page_product_thumbnail')->toHtml()?>
+            </div>
          </td>
-         <td class = "dibs-easy-descr-td" > <?= $item->getName();?></td> 
-         <td class = "dibs-easy-qty-td" > <?= $item->getQty();?></td> 
-         <td class = "dibs-easy-price-td"> <?= $block->getCurrency()->format($item->getPrice() ,array('symbol' => ''), false, false); ?></td> 
-         <td class = "dibs-easy-subtotal-td"> <?= $block->getCurrency()->format($block->getItemDisplayPriceExclTax($item),array('symbol' => ''), false, false);?></td> 
+         <td class = "dibs-easy-descr-td" > <?= $item->getName();?></td>
+         <td class = "dibs-easy-qty-td" > <?= $item->getQty();?></td>
+         <td class = "dibs-easy-price-td"> <?= $block->getCurrency()->format($item->getPrice() ,array('symbol' => ''), false, false); ?></td>
+         <td class = "dibs-easy-subtotal-td"> <?= $block->getCurrency()->format($block->getItemDisplayPriceExclTax($item) * $item->getQty(),array('symbol' => ''), false, false);?></td>
          <td class = "dibs-easy-remove-link"> <a class = "dibs-easy-remove-link-a" id="<?= $item->getId();?>" href="#">Remove</a></td>
     </tr>
 <?php endforeach; ?>

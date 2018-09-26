@@ -139,12 +139,4 @@ class Checkout extends Template
         $quote = $this->getQuote();
         return $quote->getId();
     }
-    
-    public function getMaskedCartId() {
-        $quote = $this->getQuote();
-        $cartId = $quote->getId();
-        error_log($cartId);
-        return 123; //$this->quoteIdMaskFactory->create()->load($cartId, 'masked_id');
-        
-    }
 }
