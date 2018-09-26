@@ -4,4 +4,5 @@
         <plugin name="dibs_easy_shipping_estimation" type="\Dibs\EasyCheckout\Plugin\ShippingEstimationPlugin" sortOrder="1" />
     </type>
     <preference for="Magento\Checkout\Api\GuestTotalsInformationManagementInterface" type="Dibs\EasyCheckout\Model\GuestTotalsInformationManagement" />
+    <preference for="Magento\Checkout\Controller\Index\Index" type="Dibs\EasyCheckout\Controller\Checkout\Index" />
 </config>
