@@ -1,0 +1,17 @@
+{
+    "name": "dibs/module-payment-easycheckout",
+    "description": "Integration with DIBS payment gateway for Easy merchants",
+    "require": {
+        "php": "~5.5.0|~5.6.0|7.*"
+    },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0"
+    ],
+    "autoload": {
+        "files": [ "registration.php" ],
+        "psr-4": {
+            "Dibs\\EasyCheckout\\": ""
+        }
+    }
+}
