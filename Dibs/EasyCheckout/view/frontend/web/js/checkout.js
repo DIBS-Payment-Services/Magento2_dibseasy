@@ -44,26 +44,10 @@ define(['uiComponent',
                  }
                  
                   var shippingMethodfromCart = '';
-                  var cartData = cartCache.get('cart-data');
-                  
-                  if(typeof cartData.shippingCarrierCode !== 'undefined' && typeof cartData.shippingMethodCode !== 'undefined') {
-                       console.log(cartData);
-                  } else {
-                      console.log('empty cartdData');
-                  }
-                  
-                  //if(cartData.shippingCarrierCode !== 'undefined' && cartData.shippingMethodCode !== 'undefined') {
-                   //shippingMethodfromCart = cartData.shippingCarrierCode + '_' + cartData.shippingMethodCode;
-                   console.log(cartData);
-          
-                  //}
-                 
                  
                   ct.getShippingMethods(shippingMethodfromCart);
                   //ct.getTotals();
                });
-                //this.getTotals();
-                console.log(checkoutOptions);
                $(".dibs-easy-remove-link-a").click(function(){
                 var id = $(this).attr("id");
                 confirm({
@@ -83,21 +67,17 @@ define(['uiComponent',
                    });
                 });
                 
-               
+               $('#top-cart-btn-checkout').click(function(){
+                  alert(100500); 
+               });
                 
             },
-
-           incrementClickCounter: function() {
-             console.log(this.checkout);
-           },
-
-           setSipping: function() {
-            
-           },
 
            getTotals: function() {
                return [];
            },
+           
+           checkoutUrl: url.build('/checkout'),
 
            getTotals: function() {
                 context = this;
@@ -105,7 +85,6 @@ define(['uiComponent',
                 $.get(url.build('/dibs_easy/checkout/totals') , function(data) { 
                   }).done(function(data) {
                       var parsed = JSON.parse(data);
-                      console.log(parsed);
                       context.shipping(parsed.shipping);
                       context.subtotal(parsed.subtotal);
                       context.grand_total(parsed.currency + parsed.grand_total);
