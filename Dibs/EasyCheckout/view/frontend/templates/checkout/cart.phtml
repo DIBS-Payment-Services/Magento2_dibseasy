@@ -1,25 +1,29 @@
 <h1 class="page-title"> Cart items</h1>
-<table>
-    <thead class="cart-thead">
-        <tr class="cart-thead">
-            <th></th>
-            <th></th>
-            <th>qty</th>
-            <th class="col price">Price</th>
-            <th>Subtotal</th>
+<table id="dibseasy-cart-table">
+   
+        <tr id="dibs-easy-cart-thead">
+            <td></td>
+            <td>qty</td>
+            <td class="col price">Price</td>
+            <td>Subtotal</td>
         </tr>
-    </thead>
+   
 <?php foreach($block->getCartItems() as $item) : ?>
     <tr class="dibs-easy-cart-row">
-         <td class="dibs-easy-thumb-td"> <div class="dibs-easy-product-thumbnail">
+         <td class="dibs-easy-thumb-td"> 
+            <div id="dibs-easy-product-thumbnail">
                 <?= $block->getImage($item->getProduct(), 'cart_page_product_thumbnail')->toHtml()?>
             </div>
+            <div id="dibs-easy-cart-descr"> 
+                <?= $item->getName();?>
+            </div>
          </td>
-         <td class = "dibs-easy-descr-td" > <?= $item->getName();?></td>
-         <td class = "dibs-easy-qty-td" > <?= $item->getQty();?></td>
+         
+         <td class = "dibs-easy-qty-td" > <input class="dibs-easy-qty-input" style="width: 30px;" id="<?= $item->getId(); ?>" type="text" value="<?= $item->getQty();?>"></td>
          <td class = "dibs-easy-price-td"> <?= $block->getCurrency()->format($item->getPrice() ,array('symbol' => ''), false, false); ?></td>
-         <td class = "dibs-easy-subtotal-td"> <?= $block->getCurrency()->format($block->getItemDisplayPriceExclTax($item) * $item->getQty(),array('symbol' => ''), false, false);?></td>
-         <td class = "dibs-easy-remove-link"> <a class = "dibs-easy-remove-link-a" id="<?= $item->getId();?>" href="#">Remove</a></td>
+         <td class = "dibs-easy-subtotal-td"> <?= $block->getCurrency()->format($block->getItemDisplayPriceExclTax($item) * $item->getQty(),array('symbol' => ''), false, false);?>
+             <span class="dibs-easy-remove-link"> <a class = "dibs-easy-remove-link-a" id="<?= $item->getId();?>" href="#">Remove</a> </span>
+         </td>
     </tr>
 <?php endforeach; ?>
 </table>

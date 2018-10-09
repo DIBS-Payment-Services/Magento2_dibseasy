@@ -24,6 +24,10 @@ class UpdateCart extends \Magento\Framework\App\Action\Action {
         if(isset($post['remove_item_id'])) {
            $this->dibsCheckout->removeFromCart($post['remove_item_id']);
         }
+        
+        if(isset($post['item_qty']) && isset($post['item_id'])) {
+            $this->dibsCheckout->updateCartItemQty($post['item_id'],$post['item_qty']);
+        }
 
     }
 

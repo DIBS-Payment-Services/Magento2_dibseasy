@@ -1,22 +1,26 @@
 <script type="text/javascript" src="<?php echo $block->getDibsCheckoutJsUrl() ?>"></script>
 <div id="checkout">  
    <?php echo $block->getChildHtml('dibs.easy.checkout_cart'); ?>
-    <div id="dibs-easy-controls">
+    
+    
+   <div id="dibs-easy-controls">
        <!--Order summary -->
        <div data-bind="scope: 'checkout'">
         <!-- ko template: getTemplate() --><!-- /ko -->
        </div>
     </div>
     <div id="dibs-easy-window">
-        <div id="dibs-complete-checkout"></div>
-        
-        <div id="dibseasy-switch-checkout-mobile">
+        <div id="dibs-complete-checkout">
+        </div>
+        <div id="dibseasy-switch-checkout-mobile" style="display: none;">
             <form action="<?= $block->getUrl('checkout') ?>">
                 <button type="submit" class="btn btn-outline-primary">Use other payment method</button>
             </form>
         </div>
     </div>
     <div id="clear"></div>
+    
+
 </div>
 
 <script type="text/x-magento-init">

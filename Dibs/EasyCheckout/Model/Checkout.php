@@ -569,6 +569,24 @@ class Checkout
            return json_encode($result);
         }
     }
+    
+    public function updateCartItemQty($itemId, $itemQty) {
+       
+       
+       $orderItems = json_decode($this->checkoutSession->getOrderItems(), true);
+        
+       $buyRequest= ['qty' => $itemQty];
+       
+       $quote = $this->getQuote();
+       
+       $quote->updateItem($itemId, $buyRequest);
+       
+       $quote->setDibsEasyPaymentId('');
+       
+       $this->quoteRepository->save($quote);
+     
+        
+    }
 
     public function getShippigMethodByCode($shippingCode) {
         $quote = $this->checkoutSession->getQuote();

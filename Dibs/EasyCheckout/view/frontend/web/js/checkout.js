@@ -67,12 +67,31 @@ define(['uiComponent',
                    });
                 });
                 
-               $('#top-cart-btn-checkout').click(function(){
-                  alert(100500); 
+               $( ".dibs-easy-qty-input" ).change(function() {
+                    var prev = $(this).data('val');
+                    var current = $(this).val();
+                    
+                    if(current > 0 && current !== prev) {
+                        ct.updateCartQty();
+                    }
+                    
+                    console.log("Prev value " + prev);
+                    console.log("New value " + current);
                });
-                
+               
+               $( ".dibs-easy-qty-input" ).on('focusin', function() {
+                     $(this).data('val', $(this).val());
+               });
+               
+               $( ".dibs-easy-qty-input" ).on('focusout', function() {
+                     ct.validateQty($(this));
+               });
+               
+               $("#dibs-checkout-iframe").on("load", function(){
+                 $("#dibseasy-switch-checkout-mobile").show();
+               });
+               
             },
-
            getTotals: function() {
                return [];
            },
@@ -103,18 +122,6 @@ define(['uiComponent',
                    $.each(parsed, function( index, value){
                        arr.push({title: value.method_title, price: value.price, code: value.code, active: value.active});
                    });
-                   
-                   /*
-                   if(arr.length == 1) {
-                       var method = arr[0];
-                       arr = [];
-                       arr.push({title: method.title, price: method.price, 
-                                 code: method.code, active: 1});
-                             
-                       context.setShippingMethod(method.code);
-                   }
-                   */
-                   
                    context.shippingMethods(arr);
                    context.checkoutinit.thawCheckout();
                    context.getTotals();
@@ -140,6 +147,36 @@ define(['uiComponent',
                 this.checkoutinit.freezeCheckout();
                 this.setShippingMethod($(event.target).attr("id"));
            },
+           
+           updateCartQty: function() {
+               console.log("updateCartQty");
+           },
+           
+           validateQty: function (elem) {
+            var itemQty = elem.data('val');
+
+              if (!this.isValidQty(itemQty, elem.val())) {
+                elem.val(itemQty);
+              } else {
+                  fullScreenLoader.startLoader();
+                  $.post(url.build('/dibs_easy/checkout/updatecart'), 
+                                   {"item_qty":elem.val(), 
+                                    "item_id":elem.attr('id')} ,
+                  function(){
+                    
+                  }).done(function(result) {
+                      window.location.reload();
+                  });
+              }
+            },
+            
+           isValidQty: function (origin, changed) {
+            return origin != changed && //eslint-disable-line eqeqeq
+                changed.length > 0 &&
+                changed - 0 == changed && //eslint-disable-line eqeqeq
+                changed - 0 > 0;
+            },
+
 
     });
 });
