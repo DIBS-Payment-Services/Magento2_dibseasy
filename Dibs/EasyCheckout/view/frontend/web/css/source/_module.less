@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
 & when (@media-common = true) {
 
     .cart-thead {
@@ -25,7 +27,7 @@
         /* Style for "Shipping m" */
         height: 36px;
         color: #333333;
-        font-family: "Source Sans Pro Light";
+        font-family: 'Open Sans', sans-serif;
         font-size: 30px;
         font-weight: 300;
         line-height: 31px;
@@ -35,7 +37,7 @@
         /* Style for "Order Summ" */
         height: 38px;
         color: #1d1d1b;
-        font-family: "Source Sans Pro Light";
+        font-family: 'Open Sans', sans-serif;
         font-size: 30px;
         font-weight: 300;
     }
@@ -142,6 +144,14 @@
     #dibs-easy-cart-thead td {
        text-transform: uppercase;
        font-weight: bold;
+    }
+    
+    #dibs-easy-shipping-method-wrapper {
+        margin-bottom: 15px;
+    }
+    
+    #dibs-easy-shipping-title {
+        margin-bottom: 10px;
     }
 }
 
@@ -293,14 +303,9 @@
         display: none;
    } 
    
-   
    #dibs-easy-controls {
         float: none;
         width: 100%;
-   }
-   
-   #dibs-easy-window {
-       margin-left: 20px;
    }
 }
  
