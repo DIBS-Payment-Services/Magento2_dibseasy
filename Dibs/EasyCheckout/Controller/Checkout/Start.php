@@ -82,7 +82,7 @@ class Start extends \Magento\Framework\App\Action\Action {
         }
         $paymentId = $this->getRequest()->getParam(self::DIBS_PAYMENT_ID_PARAM);
         $quoteDibsPaymentId = $this->checkoutSession->getDibsEasyPaymentId();
-        if (!empty($paymentId) && $paymentId == $this->checkoutSession->getDibsEasyPaymentId()){
+        if (!empty($paymentId) && $paymentId == $quote->getDibsEasyPaymentId()){
             return $this->resultRedirectFactory->create()->setPath('dibs_easy/checkout/validate');
         }
         if (!empty($paymentId) && !empty($quoteDibsPaymentId) && $paymentId != $quoteDibsPaymentId){
