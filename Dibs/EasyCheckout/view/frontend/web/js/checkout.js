@@ -87,10 +87,6 @@ define(['uiComponent',
                      ct.validateQty($(this));
                });
                
-               $("#dibs-checkout-iframe").on("load", function(){
-                 $("#dibseasy-switch-checkout-mobile").show();
-               });
-               
             },
            getTotals: function() {
                return [];
