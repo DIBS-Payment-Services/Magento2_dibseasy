@@ -16,6 +16,13 @@ class Shipping extends \Magento\Framework\App\Action\Action {
     }
 
     public function execute() {
-       echo $this->dibsCheckout->getShippingMethods();
+        
+       $shippingMethods = $this->dibsCheckout->getShippingMethods();
+       $result = json_decode($shippingMethods, true);
+       if($result['result'] == 'error') {
+          $this->messageManager->addErrorMessage($result['message']);
+       }
+       echo $shippingMethods;
+       
    }
 }

@@ -14,6 +14,9 @@ define(['uiComponent',
            grand_total: ko.observable(''),
            currency: ko.observable(''),
            shippingMethods: ko.observableArray([]),
+           cartTotals: ko.observableArray([]),
+           
+           
            initialize: function () {
               this._super();
                var checkoutOptions = {
@@ -24,41 +27,24 @@ define(['uiComponent',
                     language: this.checkout.language
                 };
                 this.checkoutinit = new Dibs.Checkout(checkoutOptions);
-   
-              var ct = this;
-              this.checkoutinit.on('address-changed', function(address) {
-                var countryCode = address.countryCode;
-       
-                switch (countryCode) {
-                    case 'SWE':
-                        countryCode = 'SE';
-                    break;
-                    case 'NOR':
-                         countryCode = 'NO';
-                    break;
-                    case 'DNK':
-                        countryCode = 'DK';
-                    break;
-                default:
-                    //countryCode = 'SE';
-                 }
-                 
+                this.getTotals();
+           
+                var ct = this;
+                this.checkoutinit.on('address-changed', function(address) {
                   var shippingMethodfromCart = '';
-                 
                   ct.getShippingMethods(shippingMethodfromCart);
-                  //ct.getTotals();
-               });
+                });
+               
+               
                $(".dibs-easy-remove-link-a").click(function(){
                 var id = $(this).attr("id");
+                var ct = this;
                 confirm({
                     content: 'Delete this item ?',
                     actions: {
                         /** @inheritdoc */
                         confirm: function () {
-                           fullScreenLoader.startLoader();
-                           $.post(url.build('/dibs_easy/checkout/updatecart') , {"remove_item_id": id} ,function(data) {
-                                window.location.href = url.build('/dibs_easy/checkout/start');
-                           });
+                           removeProduct(id);
                         },
                         /** @inheritdoc */
                         always: function (e) {
@@ -87,6 +73,12 @@ define(['uiComponent',
                      ct.validateQty($(this));
                });
                
+               function removeProduct(id) {
+                   $.post(url.build('/dibs_easy/checkout/updatecart') , {"remove_item_id": id} ,function(data) {
+                        ct.getShippingMethods('');
+                   });
+               }
+               
             },
            getTotals: function() {
                return [];
@@ -100,27 +92,49 @@ define(['uiComponent',
                 $.get(url.build('/dibs_easy/checkout/totals') , function(data) { 
                   }).done(function(data) {
                       var parsed = JSON.parse(data);
+                      
+                      console.log(parsed);
+                      /*
                       context.shipping(parsed.shipping);
                       context.subtotal(parsed.subtotal);
                       context.grand_total(parsed.currency + parsed.grand_total);
                       context.checkoutinit.thawCheckout();
+                      */
+                     context.checkoutinit.thawCheckout();
+                      context.cartTotals(parsed);
                 });
+           },
+           
+           removeProduct: function(id) {
+             $.post(url.build('/dibs_easy/checkout/updatecart') , {"remove_item_id": id} ,function(data) {
+                window.location.href = url.build('/dibs_easy/checkout/start');
+             });
+                     
            },
 
            getShippingMethods: function(cartShippingMethod) {
              context = this;  
               this.checkoutinit.freezeCheckout();
-             $.post(url.build('/dibs_easy/checkout/shipping'), {"shippingMethod" : cartShippingMethod} ,function(){
+             $.post(url.build('dibs_easy/checkout/shipping'), {"shippingMethod" : cartShippingMethod} ,function(){
              
              }).done(function(result) {
                    var parsed = JSON.parse(result);
                    var arr = [];
-                   $.each(parsed, function( index, value){
-                       arr.push({title: value.method_title, price: value.price, code: value.code, active: value.active});
-                   });
-                   context.shippingMethods(arr);
-                   context.checkoutinit.thawCheckout();
-                   context.getTotals();
+                   console.log(parsed);
+                   
+                   if(parsed.result === 'success') {
+                        $.each(parsed.methods, function( index, value){
+                            arr.push({title: value.method_title, price: value.price, code: value.code, active: value.active});
+                        });
+                        context.shippingMethods(arr);
+                        context.checkoutinit.thawCheckout();
+                        context.getTotals();
+                   } else {
+                       alert(parsed.message);
+                       window.location.href = url.build('checkout/cart');
+                   }
+                   
+                   
             });
            },
 
@@ -161,7 +175,9 @@ define(['uiComponent',
                   function(){
                     
                   }).done(function(result) {
-                      window.location.reload();
+                      
+                      fullScreenLoader.stopLoader();
+                      //window.location.reload();
                   });
               }
             },
