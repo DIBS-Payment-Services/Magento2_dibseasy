@@ -12,7 +12,7 @@
     <tr class="dibs-easy-cart-row">
          <td class="dibs-easy-thumb-td"> 
             <div id="dibs-easy-product-thumbnail">
-                <?= $block->getImage($item->getProduct(), 'cart_page_product_thumbnail')->toHtml()?>
+                <?php echo get_class($block->getImage($item->getProduct(), 'cart_page_product_thumbnail')); ?>
             </div>
             <div id="dibs-easy-cart-descr"> 
                 <?= $item->getName();?>

@@ -22,6 +22,8 @@ class Payment extends Service
 
     /** @var Action\Payment\Cancel  */
     private $cancel;
+    
+    private $update;
 
     /**
      * Payment constructor.
@@ -35,6 +37,7 @@ class Payment extends Service
         $this->find = new Service\Action\Payment\Find($this);
         $this->charge = new Service\Action\Payment\Charge($this);
         $this->cancel = new Service\Action\Payment\Cancel($this);
+        $this->update = new Service\Action\Payment\Update($this);
 
     }
 
@@ -81,6 +84,11 @@ class Payment extends Service
     public function cancel($paymentId, $params)
     {
         $result = $this->cancel->request($paymentId, $params);
+        return $result;
+    }
+    
+    public function update($paymentId, $params) {
+        $result = $this->update->request($paymentId, $params);
         return $result;
     }
 }

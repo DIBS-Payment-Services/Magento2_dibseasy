@@ -269,7 +269,7 @@ class Api
      *
      * @return array
      */
-    protected function getQuoteItems(Quote $quote)
+    public function getQuoteItems(Quote $quote)
     {
         $result = [];
         $items = $quote->getAllItems();

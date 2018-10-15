@@ -23,7 +23,7 @@ class Checkout
     protected $checkoutSession;
 
     /** @var Api  */
-    protected $api;
+    public $api;
 
     /** @var \Magento\Checkout\Helper\Cart  */
     protected $cartHelper;
@@ -75,6 +75,9 @@ class Checkout
     
     protected $messageManager;
 
+    protected $imageBuilder;
+    
+    protected $imageHelper;
 
     /**
      * Checkout constructor.
@@ -110,7 +113,9 @@ class Checkout
                                 \Magento\Directory\Model\Currency $currency,
                            
                                 \Magento\Quote\Model\ShippingMethodManagement $shippingManagement,
-                                \Magento\Framework\Message\ManagerInterface $messageManager
+                                \Magento\Framework\Message\ManagerInterface $messageManager,
+                                \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
+                                \Magento\Catalog\Helper\Image $imageHelper
                              
     )
     {
@@ -132,6 +137,8 @@ class Checkout
         $this->currency = $currency;
         $this->shippingManagement = $shippingManagement;
         $this->messageManager = $messageManager;
+        $this->imageBuilder = $imageBuilder;
+        $this->imageHelper = $imageHelper;
         
     }
 
@@ -144,9 +151,12 @@ class Checkout
     {
         if (!$quote->isVirtual()) {
             $rate = $this->findShippingRate($quote);
+            
             if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()){
                 //$this->updateShippingMethod($quote);
             }
+            
+            
         }
         $paymentId = $this->api->createPayment($this->getQuote());
         $this->checkoutSession->setDibsEasyPaymentId($paymentId);
@@ -506,13 +516,12 @@ class Checkout
     
     public function getShippingMethodsManager() {
         $quote = $this->getQuote();
-     
         if($quote->isVirtual()) {
             $result = ['result' => 'success', 'methods' => []];
         } else {
             $paymentId = $quote->getDibsEasyPaymentId();
             
-            try {
+                    try {
                     $payment = $this->api->findPayment($paymentId);
                     $this->prepareQuoteShippingAddress($quote, $payment);
                     $this->prepareQuoteBillingAddress($quote, $payment);
@@ -539,11 +548,13 @@ class Checkout
                        $code = $method->getCarrierCode() . '_' . $method->getMethodCode();
                        $store = $this->storeManager->getStore();
                        $amountPrice = $store->getBaseCurrency()->convert($method->getAmount(), $store->getCurrentCurrencyCode());
-                       $active = 0;  
-                       if($quote->getShippingAddress()->getShippingMethod() == $code) $active = 1;
+                      
+                       ($quote->getShippingAddress()->getShippingMethod() == $code) ? $active = 1 : $active = 0;
+                        error_log('shipping_method=' . $quote->getShippingAddress()->getShippingMethod());
+                       
                        $methods[$code] = ['carrier_title' => $method->getCarrierTitle(),
                                          'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
-                                         'method_title' => $method->getMethodTitle(),
+                                         'method_title' => $method->getCarrierTitle() . ' - ' .$method->getMethodTitle(),
                                          'code' => $code,
                                          'active' => $active];
                      }
@@ -552,15 +563,13 @@ class Checkout
                         $result = ['result' => 'success', 'methods' => $methods];
             
                     }else {
-                        $result = ['result' => 'error', 'message' => 'No available shipping methods for this address'];
+                        $result = ['result' => 'error', 'error' => ['type' => 'no_methods', 'message' => 'No available shipping methods for this address']];
+                    }
+                    } catch(\Exception $e) {
+                        $result = ['result' => 'error', 'error' => ['type' => 'exception', 'message' => $e->getMessage()]];
                     }
             
-                } catch (\Exception $e) {
-                    echo 105050;
-                    $result = ['result' => 'error', 'message' => $e->getMessage()];
-                }
-                
-         
+        
         }
      
        return $result;
@@ -604,7 +613,6 @@ class Checkout
         $shippingAddress->setShippingDescription($sipping_description);
         $quote->setTotalsCollectedFlag(false);
         $quote->collectTotals();
-        $paymentId = $this->checkoutSession->getDibsEasyPaymentId();
         $this->quoteRepository->save($quote);
     }
 
@@ -652,23 +660,14 @@ class Checkout
     }
     
     public function updateCartItemQty($itemId, $itemQty) {
-       
-       
-       $orderItems = json_decode($this->checkoutSession->getOrderItems(), true);
-        
        $buyRequest= ['qty' => $itemQty];
        
        $quote = $this->getQuote();
        
        $quote->updateItem($itemId, $buyRequest);
     
-       
-       
        $this->quoteRepository->save($quote);
        
-       error_log($quote->getShippingAddress()->getShippingMethod());
-     
-        
     }
 
     public function getShippigMethodByCode($shippingCode) {
@@ -705,7 +704,7 @@ class Checkout
         if($shippingCode) {
             $res = $this->getShippigMethodByCode($shippingCode);
             if($res) {
-                $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value'=>$res['carrier_name']]; 
+                $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value'=> '' ]; 
             }
         }
         $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total'), 'value'=>$currency.$this->currency->format($grandTotal, array('symbol'=>''), false, false)];
@@ -721,12 +720,56 @@ class Checkout
         $result[] = ['id'=>'subtotal', 'title'=>__('Subtotal'), 'value'=>$this->currency->format($subtotal, array('symbol' => ''), false, false)];
         $shippingCode = $quote->getShippingAddress()->getShippingMethod();
         if($shippingCode) {
-            $res = $this->getShippigMethodByCode($shippingCode);
-            if($res) {
-                $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value'=>$res['carrier_name']]; 
-            }
+           // $res = $this->getShippigMethodByCode($shippingCode);
+           // if($res) {
+                $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
+            //}
         }
         $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total'), 'value'=>$currency.$this->currency->format($grandTotal, array('symbol'=>''), false, false)];
         return $result;
+    }
+    
+    public function changeShippingAddress() {
+        $quote = $this->getQuote();
+        $paymentId = $this->getQuote()->getDibsEasyPaymentId();   
+        $payment = $this->api->findPayment($paymentId);
+        $this->prepareQuoteShippingAddress($quote, $payment);
+        $this->prepareQuoteBillingAddress($quote, $payment);
+        $this->quoteRepository->save($quote);
+    }
+    
+    public function getCartProducts() {
+         $items = $this->getQuote()->getAllItems();
+         $result = [];
+         foreach($items as $item) {
+             
+             $imageUrl = $this->imageHelper->init($item->getProduct(), 'cart_page_product_thumbnail')->getUrl();
+             
+             $result[] = ['id' => $item->getId(),
+                          'price' => $this->currency->format($item->getPrice() ,array('symbol' => ''), false, false),
+                          'subtotal' => $this->currency->format($this->getItemDisplayPriceExclTax( $item ) * $item->getQty(), array('symbol' => ''), false, false),
+                          'image_url' => $imageUrl,
+                          'name' => $item->getName(),
+                          'qty'  => $item->getQty()
+                     ] ;
+         }
+         return $result;
+    }
+    
+    protected function getItemDisplayPriceExclTax($item)
+    {
+        if ($item instanceof QuoteItem) {
+            return $item->getCalculationPrice();
+        } else {
+            return $item->getPrice();
+        }
+    }
+    
+    protected function getImageHtml($product, $imageId, $attributes = []) {
+    
+    return $this->imageBuilder->setProduct($product)
+            ->setImageId($imageId)
+            ->setAttributes($attributes)
+            ->create();
     }
 }

@@ -1,9 +1,47 @@
+
+<h1 class="page-title"> Cart items</h1>
+<table id="dibseasy-cart-table">
+   
+        <tr id="dibs-easy-cart-thead">
+            <td></td>
+            <td>qty</td>
+            <td class="col price">Price</td>
+            <td>Subtotal</td>
+        </tr>
+   
+   <!-- ko foreach: cartProducts -->
+   <tr class="dibs-easy-cart-row">
+         <td class="dibs-easy-thumb-td"> 
+            <div id="dibs-easy-product-thumbnail">
+                <span class="product-image-container" style="width:165px;">
+                <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                    <img class="product-image-photo" data-bind = "attr: {'src': $data.image_url}" width="165" height="165" alt="Push It Messenger Bag"></span>
+                </span>
+
+            </div>
+            <div id="dibs-easy-cart-descr" data-bind="text: $data.name"> 
+            </div>
+         </td>
+         
+         <td class = "dibs-easy-qty-td" > <input class="dibs-easy-qty-input" data-bind="attr: {'id': $data.id, 'value': $data.qty }, event: {focus: $parent.cartProductInputFocusin.bind($parent), focusout: $parent.cartProductInputFocusout.bind($parent)  }" style="width: 30px;" type="text" ></td>
+         <td class = "dibs-easy-price-td" data-bind="text: $data.price"> </td>
+         <td class = "dibs-easy-subtotal-td"> 
+             <span data-bind="text: $data.subtotal"></span>
+             <span class="dibs-easy-remove-link"> <a class = "dibs-easy-remove-link-a" data-bind="attr: {'id': $data.id}, click: $parent.cartProductRemove.bind($parent)" href="#">Remove</a> </span>
+         </td>
+    </tr>
+  <!-- /ko -->
+
+</table>
+
+<div id="dibs-easy-controls">
+ 
 <!-- Shipping Methods -->
 <div data-bind="if: shippingMethods().length">
     <div id="dibs-easy-shipping-title" class="dibs-easy-ctrl-title">Shipping Methods</div>
     <div id="dibs-easy-shipping-methods">
         <div class="dibs-easy-shipping-method-wrapper" data-bind="foreach: shippingMethods">
-            <div data-bind="attr: {'id': $data.code, 'class': $data.active ? 'dibs-easy-shipping-selector dibs-easy-active' : 'dibs-easy-shipping-selector dibs-easy-non-active'   }, click: $parent.shippingClick.bind($parent)"></div>
+            <div data-bind="attr: {'id': $data.code, 'class': $data.active ? 'dibs-easy-shipping-selector dibs-easy-active' : 'dibs-easy-shipping-selector dibs-easy-non-active'}, click: $parent.shippingClick.bind($parent)"></div>
             <div> <span data-bind="text: title"> </span> - <span data-bind="text: price"> </span></div>
             <div class="clear"></div>
         </div>
@@ -19,8 +57,12 @@
         <td class="dibs-easy-totals-total" data-bind="text: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td> 
     </tr> 
 </table>
+
+ <!-- ko if: cartTotals().length > 0 -->
  <div id="dibseasy-switch-checkout-screen">
      <form  data-bind="attr: {'action': checkoutUrl}">
         <button type="submit" class="btn btn-outline-primary">Use other payment method</button>
      </form>
  </div>
+<!-- /ko -->
+</div>
