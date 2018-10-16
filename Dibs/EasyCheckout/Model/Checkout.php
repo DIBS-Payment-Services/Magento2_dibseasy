@@ -554,8 +554,6 @@ class Checkout
                        $amountPrice = $store->getBaseCurrency()->convert($method->getAmount(), $store->getCurrentCurrencyCode());
                       
                        ($quote->getShippingAddress()->getShippingMethod() == $code) ? $active = 1 : $active = 0;
-                        error_log('shipping_method=' . $quote->getShippingAddress()->getShippingMethod());
-                       
                        $methods[$code] = ['carrier_title' => $method->getCarrierTitle(),
                                          'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
                                          'method_title' => $method->getCarrierTitle() . ' - ' .$method->getMethodTitle(),
@@ -728,7 +726,7 @@ class Checkout
         $quoteTotals = $this->totalsFactory->create();
         
         $taxHtml = '';
-        if(($quote->getShippingAddress()->getTaxAmount())) {
+        if($quote->getShippingAddress()->getTaxAmount() > 0) {
             $taxAmount = $quote->getShippingAddress()->getTaxAmount();
             $taxHtml = '<br><span id="dibs-easy-incl-tax">(Incl. <span id="dibs-easy-incl-tax-amount">  '. $taxAmount . ' </span>  <span id="dibs-easy-incl-tax-symbol">' . $currency  .'</span> tax)</span>';
         }

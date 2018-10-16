@@ -18,6 +18,7 @@ define(['uiComponent',
            shippingMethods: ko.observableArray([]),
            cartTotals: ko.observableArray([]),
            cartProducts: ko.observableArray([]),
+           checkoutUrl: '',
            
            initialize: function () {
               this._super();
@@ -31,17 +32,15 @@ define(['uiComponent',
                 this.checkoutinit = new Dibs.Checkout(checkoutOptions);
                 var ct = this;
                 this.checkoutinit.on('address-changed', function(address) {
-                 ct.updateView({"action" : "change_address"});
-           
+                   ct.updateView({"action" : "change_address"});
                 });
                 this.updateView({"action" : "start"});
-               
+                this.checkoutUrl = this.checkout.checkout_url;
             },
             
-           checkoutUrl: this.checkout.checkout_url,
+           
            
            updateView: function(params) {
-             console.log(this.checkout.checkout_url);
              action = params.action;
              context = this;
              this.checkoutinit.freezeCheckout();

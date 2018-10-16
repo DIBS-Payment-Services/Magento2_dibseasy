@@ -26,7 +26,7 @@
          <td class = "dibs-easy-qty-td" > <input class="dibs-easy-qty-input" data-bind="attr: {'id': $data.id, 'value': $data.qty }, event: {focus: $parent.cartProductInputFocusin.bind($parent), focusout: $parent.cartProductInputFocusout.bind($parent)  }" style="width: 30px;" type="text" ></td>
          <td class = "dibs-easy-price-td" data-bind="text: $data.price"> </td>
          <td class = "dibs-easy-subtotal-td"> 
-             <span data-bind="text: $data.subtotal"></span>
+             <span class="dibs-easy-cart-subtotal" data-bind="text: $data.subtotal"></span>
              <span class="dibs-easy-remove-link"> <a class="dibs-easy-remove-link-a" style="color:#007FB0;" data-bind="attr: {'id': $data.id}, click: $parent.cartProductRemove.bind($parent)" href="#">Remove</a> </span>
          </td>
     </tr>
@@ -60,8 +60,8 @@
 
  <!-- ko if: cartTotals().length > 0 -->
  <div id="dibseasy-switch-checkout-screen">
-     <form  data-bind="attr: {'action': checkoutUrl}">
-        <button type="submit" class="btn btn-outline-primary">Use other payment method</button>
+     <form data-bind="attr:{'action': $data.checkoutUrl}">
+         <button type="submit"  class="btn btn-outline-primary">Use other payment method</button>
      </form>
  </div>
 <!-- /ko -->
