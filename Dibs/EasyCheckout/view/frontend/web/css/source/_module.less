@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
-
 & when (@media-common = true) {
-
+    
+    @import url('https://fonts.googleapis.com/css?family=Open+Sans');
     .cart-thead {
         text-transform: uppercase;
         color: #575757;
@@ -73,12 +72,11 @@
          width: 120px;
     }
 
-    #dibs-easy-grand-total {
+    #dibs-easy-totals-grand_total {
         /* Style for "357,00" */
         width: 69px;
         height: 28px;
         color: #444444;
-        font-size: 24px;
         font-weight: 600;
         line-height: 23px;
     }
@@ -94,13 +92,22 @@
         width: 150px;
     }
     
-    #dibs-easy-grand-total {
+    #dibs-easy-totals-lable-subtotal {
+        font-weight: bold;
+    }
+    
+    #dibs-easy-totals-lable-grand_total {
+        font-weight: bold;
+        
+    }
+    
+    #dibs-easy-totals-grand_total {
         font-weight:bold;
     }
     
-    #dibs-easy-product-thumbnail {
+    .dibs-easy-product-thumbnail {
        float: left;
-        width: 82px; 
+        width: 82px;
     }
     
     #dibs-easy-cart-thead td {
@@ -108,7 +115,7 @@
         padding-bottom: 0;
     }
     
-    #dibs-easy-cart-descr {
+    .dibs-easy-cart-descr {
         float: left;
         margin-top: 30px;
     }
@@ -130,6 +137,7 @@
     }
     
     .dibs-easy-remove-link {
+        color: red;
         margin-left: 30px;
     }
     
@@ -153,6 +161,42 @@
     #dibs-easy-shipping-title {
         margin-bottom: 10px;
     }
+    #dibs-easy-shipping-methods {
+        margin-bottom: 30px;
+    }
+    
+   #totals-table tr {
+       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+   }
+   
+   #totals-table td {
+      padding-bottom: 0;
+   }
+   
+   #totals-table {
+      margin-bottom:15px;
+   }
+   
+   #dibs-easy-grand-total-currency {
+       margin-right: 3px;
+       font-size: 10px;
+   }
+   
+   #dibs-easy-totals-subtotal {
+       font-weight: bold;
+   }
+   
+   #dibs-easy-incl-tax {
+       font-weight:normal; 
+   }
+   
+   #dibs-easy-grand-total-value {
+       margin-right: 5px;
+   }
+   
+   #dibs-easy-incl-tax-symbol {
+       font-size: 9px;
+   }
 }
 
 @media screen and (max-width: 480px) {
@@ -166,7 +210,7 @@
        width: 100%; 
     }
 
-    #dibs-easy-cart-descr {
+    .dibs-easy-cart-descr {
         margin: 0;
     }
 }
@@ -224,10 +268,6 @@
   
 }
 
-/* 
-  ##Device = Tablets, Ipads (portrait)
-  ##Screen = B/w 768px to 1024px
-*/
 
 @media (min-width: 768px) and (max-width: 1024px) {
   
@@ -247,7 +287,7 @@
        margin-left: 110px;
    }
    
-   #dibs-easy-grand-total {
+   #dibs-easy-totals-grand_total {
       font-size: 16px;
    }
    
@@ -262,11 +302,6 @@
   
 }
 
-/* 
-  ##Device = Tablets, Ipads (landscape)
-  ##Screen = B/w 768px to 1024px
-*/
-
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
   
     #dibs-easy-window {
@@ -276,11 +311,6 @@
   
 }
 
-/* 
-  ##Device = Low Resolution Tablets, Mobiles (Landscape)
-  ##Screen = B/w 481px to 767px
-*/
-
 @media (min-width: 481px) and (max-width: 767px) {
   
     #dibseasy-switch-checkout-screen {
@@ -288,11 +318,6 @@
     }
   
 }
-
-/* 
-  ##Device = Most of the Smartphones Mobiles (Portrait)
-  ##Screen = B/w 320px to 479px
-*/
 
 @media (min-width: 320px) and (max-width: 480px) {
    #dibseasy-switch-checkout-mobile {
@@ -325,11 +350,11 @@
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
 
 
-.btn-outline-primary {
-  color: #588196;
+.btn-outline-primary { //
+  color: #007FB0;
   background-color: transparent;
   background-image: none;
-  border-color: #588196; 
+  border-color: #007FB0; 
   border-radius: 25px;
   height: 35px;
 }

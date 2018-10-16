@@ -61,9 +61,9 @@ class CheckoutManager {
     public function start() {
         $quote = $this->dibsCheckout->getQuote();
         if($quote->getDibsEasyPaymentId()) {
+            $this->updateShippingMethod();
             if($this->cartEasyUpdateIsNeeded()) {
-                $this->updateShippingMethod();
-                //$this->updateEasyCart();
+                $this->updateEasyCart();
             }
             
         }
@@ -115,18 +115,24 @@ class CheckoutManager {
         if(!$quote->isVirtual()) {
             $methods = $this->dibsCheckout->getShippingMethodsManager();
             $quoteMethod = $quote->getShippingAddress()->getShippingMethod();
+            $shippingAddress = $quote->getShippingAddress();
+            
+            error_log($shippingAddress->getTaxAmount());
+            
             if(empty($quoteMethod)) {
                 if(isset($methods['methods']) && $methods['methods']) {
                     $current = current($methods['methods']);
                     $this->dibsCheckout->setSippingMethod($current['code']);
                 }
+                   error_log(121);
+         
             } else {
                 if(isset($methods['methods']) && $methods['methods']) {
                     $current = current($methods['methods']);
-                    
                     if(!array_key_exists($quoteMethod, $methods['methods'])) {
                         $this->dibsCheckout->setSippingMethod($current['code']);
-                        //error_log('setted method is not in new method\'s set');
+                    } else {
+                        $this->dibsCheckout->setSippingMethod($quoteMethod); 
                     }
                 }
             }
@@ -134,7 +140,6 @@ class CheckoutManager {
             $quote->getShippingAddress()->setShippingMethod('')->save();
             
         }
-        
     }
     
     public function getGridValues() {

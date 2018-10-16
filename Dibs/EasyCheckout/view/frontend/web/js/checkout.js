@@ -58,7 +58,7 @@ define(['uiComponent',
                             content: parsed.exception,
                             actions: {
                                 always: function(){
-                                   window.location.href = context.checkout.start_url;
+                                   window.location.href = context.checkout.cart_url;
                                 }
                             }
                         });

@@ -12,14 +12,14 @@
    <!-- ko foreach: cartProducts -->
    <tr class="dibs-easy-cart-row">
          <td class="dibs-easy-thumb-td"> 
-            <div id="dibs-easy-product-thumbnail">
+            <div class="dibs-easy-product-thumbnail">
                 <span class="product-image-container" style="width:165px;">
                 <span class="product-image-wrapper" style="padding-bottom: 100%;">
                     <img class="product-image-photo" data-bind = "attr: {'src': $data.image_url}" width="165" height="165" alt="Push It Messenger Bag"></span>
                 </span>
 
             </div>
-            <div id="dibs-easy-cart-descr" data-bind="text: $data.name"> 
+            <div class="dibs-easy-cart-descr" data-bind="text: $data.name"> 
             </div>
          </td>
          
@@ -27,7 +27,7 @@
          <td class = "dibs-easy-price-td" data-bind="text: $data.price"> </td>
          <td class = "dibs-easy-subtotal-td"> 
              <span data-bind="text: $data.subtotal"></span>
-             <span class="dibs-easy-remove-link"> <a class = "dibs-easy-remove-link-a" data-bind="attr: {'id': $data.id}, click: $parent.cartProductRemove.bind($parent)" href="#">Remove</a> </span>
+             <span class="dibs-easy-remove-link"> <a class="dibs-easy-remove-link-a" style="color:#007FB0;" data-bind="attr: {'id': $data.id}, click: $parent.cartProductRemove.bind($parent)" href="#">Remove</a> </span>
          </td>
     </tr>
   <!-- /ko -->
@@ -50,11 +50,11 @@
 
 <!-- Order summary -->
 <div id="dibs-easy-ordersummary-title" class="dibs-easy-ctrl-title">Order Summary</div>
-<table data-bind="foreach: cartTotals"> 
+<table id="totals-table" data-bind="foreach: cartTotals"> 
     <tr> 
-        <td class="dibs-easy-totals-lable" data-bind="text: title"><b></b>
+        <td class="dibs-easy-totals-lable" data-bind="html: title, attr:{'id': 'dibs-easy-totals-lable-' + $data.id }"><b></b>
         </td>  
-        <td class="dibs-easy-totals-total" data-bind="text: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td> 
+        <td  align="right" class="dibs-easy-totals-total" data-bind="html: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td> 
     </tr> 
 </table>
 

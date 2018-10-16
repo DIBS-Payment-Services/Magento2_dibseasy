@@ -78,6 +78,8 @@ class Checkout
     protected $imageBuilder;
     
     protected $imageHelper;
+    
+    protected $totalsFactory;
 
     /**
      * Checkout constructor.
@@ -115,7 +117,8 @@ class Checkout
                                 \Magento\Quote\Model\ShippingMethodManagement $shippingManagement,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
-                                \Magento\Catalog\Helper\Image $imageHelper
+                                \Magento\Catalog\Helper\Image $imageHelper,
+                                \Magento\Quote\Api\Data\TotalsInterfaceFactory $totalsFactory
                              
     )
     {
@@ -139,6 +142,7 @@ class Checkout
         $this->messageManager = $messageManager;
         $this->imageBuilder = $imageBuilder;
         $this->imageHelper = $imageHelper;
+        $this->totalsFactory = $totalsFactory;
         
     }
 
@@ -719,13 +723,30 @@ class Checkout
         $currency = $this->getQuote()->getQuoteCurrencyCode();
         $result[] = ['id'=>'subtotal', 'title'=>__('Subtotal'), 'value'=>$this->currency->format($subtotal, array('symbol' => ''), false, false)];
         $shippingCode = $quote->getShippingAddress()->getShippingMethod();
-        if($shippingCode) {
-           // $res = $this->getShippigMethodByCode($shippingCode);
-           // if($res) {
-                $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
-            //}
+        
+        
+        $quoteTotals = $this->totalsFactory->create();
+        
+        $taxHtml = '';
+        if(($quote->getShippingAddress()->getTaxAmount())) {
+            $taxAmount = $quote->getShippingAddress()->getTaxAmount();
+            $taxHtml = '<br><span id="dibs-easy-incl-tax">(Incl. <span id="dibs-easy-incl-tax-amount">  '. $taxAmount . ' </span>  <span id="dibs-easy-incl-tax-symbol">' . $currency  .'</span> tax)</span>';
         }
-        $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total'), 'value'=>$currency.$this->currency->format($grandTotal, array('symbol'=>''), false, false)];
+        
+        if($shippingCode) {
+           $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
+        }
+        
+        $grandTotalLine = '<span id="dibs-easy-grand-total-currency">'. 
+                            $currency . '</span><span id="dibs-easy-grand-total-value">' 
+                          . $this->currency->format($grandTotal, array('symbol'=>''), false, false).'</span>'
+                          . $taxHtml;
+                          
+        
+        $grandTotalHtml = '<span id="dibs-easy-grand-total-currency">'. $currency . '</span>' . '<span id="dibs-easy-grand-total-value">' . $this->currency->format($grandTotal, array('symbol'=>''), false, false) . '</span>';
+        $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total') . $taxHtml , 'value'=> $grandTotalHtml];
+        
+        
         return $result;
     }
     
