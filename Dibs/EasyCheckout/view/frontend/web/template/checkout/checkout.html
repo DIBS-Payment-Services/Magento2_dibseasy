@@ -51,7 +51,7 @@
 <!-- Order summary -->
 <div id="dibs-easy-ordersummary-title" class="dibs-easy-ctrl-title">Order Summary</div>
 <table id="totals-table" data-bind="foreach: cartTotals"> 
-    <tr> 
+    <tr data-bind="attr:{'id': 'tr-' + $data.id }"> 
         <td class="dibs-easy-totals-lable" data-bind="html: title, attr:{'id': 'dibs-easy-totals-lable-' + $data.id }"><b></b>
         </td>  
         <td  align="right" class="dibs-easy-totals-total" data-bind="html: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td> 
