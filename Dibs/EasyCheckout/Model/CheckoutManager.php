@@ -86,7 +86,7 @@ class CheckoutManager {
     protected function updateEasyCart() {
         $quote = $this->dibsCheckout->getQuote();
         $result = [];
-        $result['amount'] = $this->getGrandTotal();
+        $result['amount'] =round($quote->getGrandTotal(), 2) * 100;
         $result['items'] = $this->dibsCheckout->api->getQuoteItems($quote);
         $result['shipping']['costSpecified'] = true;
         $paymentService = $this->dibsCheckout->api->getPaymentService();
