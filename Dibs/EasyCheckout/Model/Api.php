@@ -451,7 +451,6 @@ class Api
     {
         $itemGrossTotal = (double)$item->getRowTotalInclTax() - (double)$item->getDiscountAmount();
         $result = $this->getDibsIntVal($itemGrossTotal);
-
         return $result;
     }
 
@@ -476,8 +475,8 @@ class Api
      */
     public function getDibsIntVal($value)
     {
-        $result = (double)$value * 100;
-        return (int)$result;
+        $result = $value * 100;
+        return $result;
     }
 
     /**
