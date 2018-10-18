@@ -4,4 +4,7 @@
     <action name="dibs_easy/checkout/validate">
         <section name="cart"/>
     </action>
+    <action name="dibs_easy/checkout/updateview">
+        <section name="cart"/>
+    </action>
 </config>
