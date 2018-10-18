@@ -722,13 +722,14 @@ class Checkout
         $result[] = ['id'=>'subtotal', 'title'=>__('Subtotal'), 'value'=>$this->currency->format($subtotal, array('symbol' => ''), false, false)];
         $shippingCode = $quote->getShippingAddress()->getShippingMethod();
         
-        
-        $quoteTotals = $this->totalsFactory->create();
-        
+        $totals = $quote->getTotals();
+        $taxTotal = $totals['tax']; 
         $taxHtml = '';
-        if($quote->getShippingAddress()->getTaxAmount() > 0) {
-            $taxAmount = $quote->getShippingAddress()->getTaxAmount();
-            $taxHtml = '<br><span id="dibs-easy-incl-tax">(Incl. <span id="dibs-easy-incl-tax-amount">  '. $taxAmount . ' </span>  <span id="dibs-easy-incl-tax-symbol">' . $currency  .'</span> tax)</span>';
+        $taxAmount = $taxTotal->getValue();
+        if($taxAmount > 0) {
+            $taxHtml = '<br><span id="dibs-easy-incl-tax">(Incl. <span id="dibs-easy-incl-tax-amount">  '
+                       . $taxAmount . ' </span>  <span id="dibs-easy-incl-tax-symbol">' 
+                       . $currency  .'</span> tax)</span>';
         }
         
         if($shippingCode) {
@@ -741,7 +742,9 @@ class Checkout
                           . $taxHtml;
                           
         
-        $grandTotalHtml = '<span id="dibs-easy-grand-total-currency">'. $currency . '</span>' . '<span id="dibs-easy-grand-total-value">' . $this->currency->format($grandTotal, array('symbol'=>''), false, false) . '</span>';
+        $grandTotalHtml = '<span id="dibs-easy-grand-total-currency">'. $currency . '</span>' . 
+                          '<span id="dibs-easy-grand-total-value">' . 
+                          $this->currency->format($grandTotal, array('symbol'=>''), false, false) . '</span>';
         $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total') . $taxHtml , 'value'=> $grandTotalHtml];
         
         
