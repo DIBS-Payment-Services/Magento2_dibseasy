@@ -39,9 +39,6 @@ class CheckoutManager {
         $this->updateShippingMethod();
         $this->updateEasyCart();
         $this->cartChanged = 1;
-      //    echo "<pre>";
-       //var_dump($this->dibsCheckout->getShippingMethodsManager());
-      /// echo "</pre>";
     }
     
     public function removeCartItem($id) {
@@ -116,16 +113,11 @@ class CheckoutManager {
             $methods = $this->dibsCheckout->getShippingMethodsManager();
             $quoteMethod = $quote->getShippingAddress()->getShippingMethod();
             $shippingAddress = $quote->getShippingAddress();
-            
-            error_log($shippingAddress->getTaxAmount());
-            
             if(empty($quoteMethod)) {
                 if(isset($methods['methods']) && $methods['methods']) {
                     $current = current($methods['methods']);
                     $this->dibsCheckout->setSippingMethod($current['code']);
                 }
-                   error_log(121);
-         
             } else {
                 if(isset($methods['methods']) && $methods['methods']) {
                     $current = current($methods['methods']);

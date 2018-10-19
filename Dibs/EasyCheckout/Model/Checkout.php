@@ -167,7 +167,6 @@ class Checkout
         if ($paymentId) {
             $quote->setDibsEasyPaymentId($paymentId);
             $quote->setDibsEasyGrandTotal($quote->getGrandTotal());
-            //$quote->save();
             $this->quoteRepository->save($quote);
         }
         return $paymentId;
@@ -195,14 +194,13 @@ class Checkout
      */
     public function validatePayment( Quote $quote,  Payment $payment)
     {
-        $result = false;
+        $result = true;
         if ($payment->getOrderDetails()->getData('amount') == $this->api->getDibsQuoteGrandTotal($quote)
             && $payment->getPaymentId() ==  $this->checkoutSession->getDibsEasyPaymentId()
             && $payment->getOrderDetails()->getData('currency') == $quote->getQuoteCurrencyCode()
         ) {
             $result = true;
         }
-
         return $result;
     }
 
@@ -468,8 +466,6 @@ class Checkout
             $return = ['result' => 'success', 'methods' => []];
         } else {
             $paymentId = $quote->getDibsEasyPaymentId();
-            error_log($quote->getId());
-            
             $payment = $this->api->findPayment($paymentId);
             $this->prepareQuoteShippingAddress($quote, $payment);
             $this->prepareQuoteBillingAddress($quote, $payment);
