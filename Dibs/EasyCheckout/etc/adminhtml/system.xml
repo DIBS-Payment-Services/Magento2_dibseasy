@@ -49,10 +49,6 @@
                     <label>New Order Status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
-                <field id="carrier" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Shipping Carrier</label>
-                    <source_model>Dibs\EasyCheckout\Model\Config\Source\Carrier</source_model>
-                </field>
             </group>
         </section>
    </system>

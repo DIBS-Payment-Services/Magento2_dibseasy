@@ -122,7 +122,6 @@ define(['uiComponent',
            },
            
            cartProductRemove : function(item, event) {
-                console.log("cartProductRemove");
                 var id = $(event.target).attr("id");
                 var ct = this;
                 confirm({

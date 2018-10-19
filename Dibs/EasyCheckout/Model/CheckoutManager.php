@@ -149,6 +149,7 @@ class CheckoutManager {
            $result['redirect'] = $this->cartIsEmpty;
         }
         echo json_encode($result);
+        exit;
     }
     
     protected function getCartProducts() {

@@ -18,7 +18,6 @@ define([
              
          var current_url = window.location.href; 
          if(current_url.includes('dibs_easy/checkout/start')) {
-             console.log(BASE_URL);
              window.location.href = BASE_URL + 'dibs_easy/checkout/start';
          }
        }, 
@@ -31,7 +30,6 @@ define([
             $(document).trigger('ajax:removeFromCart', productData['product_sku']);
              var current_url = window.location.href; 
            if(current_url.includes('dibs_easy/checkout/start')) {
-             console.log(BASE_URL);
              window.location.href = BASE_URL + 'dibs_easy/checkout/start';
             }
         }
