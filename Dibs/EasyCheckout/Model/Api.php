@@ -287,6 +287,12 @@ class Api
             $shippingName = $shippingAddress->getShippingDescription();
             $result[] = $this->getShippingLine($shippingAddress, $shippingReference, $shippingName);
         }
+        
+        $discountAmount = $quote->getShippingAddress()->getDiscountAmount();
+        
+        //if(abs($discountAmount)) {
+          //   $result[] = 
+        //}
 
         return $result;
     }
@@ -449,7 +455,8 @@ class Api
      */
     protected function getItemGrossTotalAmount($item)
     {
-        $itemGrossTotal = (double)$item->getRowTotalInclTax() - (double)$item->getDiscountAmount();
+        error_log('$item->getDiscountAmount()' . $item->getTaxAmount());
+        $itemGrossTotal = (double)$item->getRowTotal() + $item->getTaxAmount() - (double)abs($item->getDiscountAmount());
         $result = $this->getDibsIntVal($itemGrossTotal);
         return $result;
     }

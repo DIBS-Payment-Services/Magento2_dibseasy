@@ -719,16 +719,17 @@ class Checkout
                        . $taxAmount . ' </span>  <span id="dibs-easy-incl-tax-symbol">' 
                        . $currency  .'</span> tax)</span>';
         }
-        $shippingCode = $quote->getShippingAddress()->getShippingMethod();
-        if($shippingCode) {
-           $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
-        }
         $discountAmount = $quote->getShippingAddress()->getDiscountAmount();
-        $grandTotalWithoutDiscount = $this->getQuote()->getGrandTotal() - abs($discountAmount);
         if(abs($discountAmount) > 0) {
             $discountDescription = $quote->getShippingAddress()->getDiscountDescription();
             $result[] = ['id'=>'discount', 'title'=> 'Discount (' . $discountDescription . ')', 'value'=> $discountAmount];
         }
+        $shippingCode = $quote->getShippingAddress()->getShippingMethod();
+        if($shippingCode) {
+           $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
+        }
+       
+        $grandTotalWithoutDiscount = $this->getQuote()->getGrandTotal();// - abs($discountAmount);
         $grandTotalHtml = '<span id="dibs-easy-grand-total-currency">'. $currency . '</span>' . 
                           '<span id="dibs-easy-grand-total-value">' . 
                           $this->currency->format($grandTotalWithoutDiscount, array('symbol'=>''), false, false) . '</span>';
