@@ -139,4 +139,19 @@ class Checkout extends Template
         $quote = $this->getQuote();
         return $quote->getId();
     }
+    
+    public function couponeIsApplied() {
+        $quote = $this->getQuote();
+        if($quote->getCouponCode()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+    public function couponCode() {
+        $quote = $this->getQuote();
+        error_log('======================'.  $quote->getCouponCode()  .'==============================================');
+        return $quote->getCouponCode();
+    }
 }

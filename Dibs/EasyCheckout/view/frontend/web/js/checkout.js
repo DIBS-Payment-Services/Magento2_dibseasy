@@ -19,6 +19,10 @@ define(['uiComponent',
            cartTotals: ko.observableArray([]),
            cartProducts: ko.observableArray([]),
            checkoutUrl: '',
+           couponeAddUrl: this.checkout.coupon_apply_url,
+           couponeIsApplied: this.checkout.coupone_is_applied,
+           coupone_button_lable: '',
+           couponeCode: '',
            
            initialize: function () {
               this._super();
@@ -36,6 +40,10 @@ define(['uiComponent',
                 });
                 this.updateView({"action" : "start"});
                 this.checkoutUrl = this.checkout.checkout_url;
+                this.couponeAddUrl = this.checkout.coupon_apply_url;
+                this.couponeIsApplied = this.checkout.coupone_is_applied;
+                this.coupone_button_lable = this.checkout.coupone_is_applied ? 'Cancel Coupone' : 'Apply Discount';
+                this.couponeCode = this.checkout.coupone_code;
             },
             
            

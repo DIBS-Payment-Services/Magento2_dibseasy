@@ -58,6 +58,31 @@
     </tr> 
 </table>
 
+<div class="block discount" id="block-discount" data-mage-init='{"collapsible":{"openedState": "active", "saveState": false}}'>
+    <div class="title" data-role="title">
+        <strong id="block-discount-heading" role="heading" aria-level="2">Apply Discount Code</strong>
+    </div>
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading">
+        <form id="discount-coupon-form" data-bind="attr:{action: couponeAddUrl}"
+              method="post">
+            <div class=''>
+                <input type="hidden" name="remove" id="remove-coupon" value="0" />
+                <div class="field" style='float:left;'>
+                    <label for="coupon_code" class="label"><span>Enter discount code</span></label>
+                    <div class="control">
+                        <input type="text" class="input-text" id="coupon_code" name="coupon_code" data-bind="attr:{'value': couponeCode}" placeholder="Enter discount code"/>
+                    </div>
+                </div>
+                <div class="primary">
+                  <button class="action apply primary" style="margin-top: 20px;" type="submit" >
+                     <span data-bind="text: coupone_button_lable" >Apply Discount</span>
+                  </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="clear"> </div>
+
  <!-- ko if: cartTotals().length > 0 -->
  <div id="dibseasy-switch-checkout-screen">
      <form data-bind="attr:{'action': $data.checkoutUrl}">

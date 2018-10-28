@@ -721,6 +721,7 @@ class Checkout
         }
         $discountAmount = $quote->getShippingAddress()->getDiscountAmount();
         if(abs($discountAmount) > 0) {
+            $discountAmount = $this->currency->format($discountAmount, array('symbol' => ''), false, false);
             $discountDescription = $quote->getShippingAddress()->getDiscountDescription();
             $result[] = ['id'=>'discount', 'title'=> 'Discount (' . $discountDescription . ')', 'value'=> $discountAmount];
         }

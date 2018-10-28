@@ -4,10 +4,11 @@
 <div data-bind="scope: 'checkout'">
 <!-- ko template: getTemplate() --><!-- /ko -->
 </div>
-
+    
 <div id="dibs-easy-window">
     <div id="dibs-complete-checkout">
     </div>
+</div>
     <div id="dibseasy-switch-checkout-mobile">
         <form action="<?= $block->getUrl('checkout') ?>">
             <button type="submit" class="btn btn-outline-primary">Use other payment method</button>
@@ -33,7 +34,11 @@
                                           "updateview_url": "<?= $block->getUrl('dibs_easy/checkout/updateview')?>",
                                           "cart_url": "<?= $block->getUrl('checkout/cart')?>",
                                           "checkout_url": "<?= $block->getUrl('checkout')?>",
-                                          "start_url": "<?= $block->getUrl('dibs_easy/checkout/start')?>"
+                                          "start_url": "<?= $block->getUrl('dibs_easy/checkout/start')?>",
+                                          "coupon_apply_url": "<?= $block->getUrl('checkout/cart/couponPost')?>",
+                                          "coupone_remove_url": "<?= $block->getUrl('dibs_easy/checkout/start')?>",
+                                          "coupone_is_applied": "<?= $block->couponeIsApplied() ?>",
+                                          "coupone_code": "<?= $block->couponCode() ?>"
                               }
                         }
                     }
