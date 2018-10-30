@@ -1,14 +1,12 @@
 
 <h1 class="page-title"> Cart items</h1>
 <table id="dibseasy-cart-table">
-   
         <tr id="dibs-easy-cart-thead">
             <td></td>
             <td>qty</td>
             <td class="col price">Price</td>
             <td>Subtotal</td>
         </tr>
-   
    <!-- ko foreach: cartProducts -->
    <tr class="dibs-easy-cart-row">
          <td class="dibs-easy-thumb-td"> 
@@ -17,25 +15,20 @@
                 <span class="product-image-wrapper" style="padding-bottom: 100%;">
                     <img class="product-image-photo" data-bind = "attr: {'src': $data.image_url}" width="165" height="165" alt="Push It Messenger Bag"></span>
                 </span>
-
             </div>
             <div class="dibs-easy-cart-descr" data-bind="text: $data.name"> 
             </div>
          </td>
-         
          <td class = "dibs-easy-qty-td" > <input class="dibs-easy-qty-input" data-bind="attr: {'id': $data.id, 'value': $data.qty }, event: {focus: $parent.cartProductInputFocusin.bind($parent), focusout: $parent.cartProductInputFocusout.bind($parent)  }" style="width: 30px;" type="text" ></td>
          <td class = "dibs-easy-price-td" data-bind="text: $data.price"> </td>
-         <td class = "dibs-easy-subtotal-td"> 
+         <td class = "dibs-easy-subtotal-td">
              <span class="dibs-easy-cart-subtotal" data-bind="text: $data.subtotal"></span>
              <span class="dibs-easy-remove-link"> <a class="dibs-easy-remove-link-a" style="color:#007FB0;" data-bind="attr: {'id': $data.id}, click: $parent.cartProductRemove.bind($parent)" href="#">Remove</a> </span>
          </td>
     </tr>
   <!-- /ko -->
-
 </table>
-
 <div id="dibs-easy-controls">
- 
 <!-- Shipping Methods -->
 <div data-bind="if: shippingMethods().length">
     <div id="dibs-easy-shipping-title" class="dibs-easy-ctrl-title">Shipping Methods</div>
@@ -47,34 +40,36 @@
         </div>
     </div>
 </div>
-
-<!-- Order summary -->
 <div id="dibs-easy-ordersummary-title" class="dibs-easy-ctrl-title">Order Summary</div>
-<table id="totals-table" data-bind="foreach: cartTotals"> 
-    <tr data-bind="attr:{'id': 'tr-' + $data.id }"> 
-        <td class="dibs-easy-totals-lable" data-bind="html: title, attr:{'id': 'dibs-easy-totals-lable-' + $data.id }"><b></b>
-        </td>  
-        <td  align="right" class="dibs-easy-totals-total" data-bind="html: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td> 
-    </tr> 
-</table>
-
-<div class="block discount" id="block-discount" data-mage-init='{"collapsible":{"openedState": "active", "saveState": false}}'>
+<table id="totals-table"> 
+    <tbody>
+<!-- ko foreach: cartTotals -->
+   <!-- ko if: $data.id !== 'grand_total' -->
+      <tr data-bind="attr:{'id': 'tr-' + $data.id }">
+         <td class="dibs-easy-totals-lable" data-bind="html: title, attr:{'id': 'dibs-easy-totals-lable-' + $data.id }"><b></b>
+         </td>  
+         <td  align="right" class="dibs-easy-totals-total" data-bind="html: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td>
+      </tr>
+      <!-- /ko -->
+ <!-- /ko -->
+    <tr id="coupone_tr">
+       <td style="width: 322px;">
+       <div class="block discount" id="block-discount" data-mage-init='{"collapsible":{"openedState": "active", "saveState": false}}'>
     <div class="title" data-role="title">
-        <strong id="block-discount-heading" role="heading" aria-level="2">Apply Discount Code</strong>
+        <strong id="block-discount-heading" role="heading" aria-level="2">&#10010;&nbsp;Apply Discount Code</strong>
     </div>
     <div class="content" data-role="content" aria-labelledby="block-discount-heading">
         <form id="discount-coupon-form" data-bind="attr:{action: couponeAddUrl}"
               method="post">
             <div class=''>
-                <input type="hidden" name="remove" id="remove-coupon" value="0" />
+                <input type="hidden" name="remove" id="remove-coupon" data-bind="attr: {'value': couponeIsApplied ? 1: 0}" value="0" />
                 <div class="field" style='float:left;'>
-                    <label for="coupon_code" class="label"><span>Enter discount code</span></label>
                     <div class="control">
-                        <input type="text" class="input-text" id="coupon_code" name="coupon_code" data-bind="attr:{'value': couponeCode}" placeholder="Enter discount code"/>
+                        <input type="text" class="input-text" id="coupon_code" name="coupon_code" data-bind="attr:{'value': couponeCode}, disable: couponeIsApplied" placeholder="Enter discount code"/>
                     </div>
                 </div>
                 <div class="primary">
-                  <button class="action apply primary" style="margin-top: 20px;" type="submit" >
+                  <button class="action apply primary" type="submit" >
                      <span data-bind="text: coupone_button_lable" >Apply Discount</span>
                   </button>
                 </div>
@@ -82,12 +77,26 @@
         </form>
     </div>
     <div class="clear"> </div>
+    </div>
+    </td>
+ <td></td>
+</tr>
 
+<!-- ko foreach: cartTotals -->
+   <!-- ko if: $data.id === 'grand_total' -->
+      <tr data-bind="attr:{'id': 'tr-' + $data.id }">
+         <td class="dibs-easy-totals-lable" data-bind="html: title, attr:{'id': 'dibs-easy-totals-lable-' + $data.id }"><b></b>
+         </td>
+         <td  align="right" class="dibs-easy-totals-total" data-bind="html: value, attr:{'id': 'dibs-easy-totals-' + $data.id }"><b> </b></td>
+      </tr>
+      <!-- /ko -->
+ <!-- /ko -->
+    </tbody>
+ </table>
  <!-- ko if: cartTotals().length > 0 -->
- <div id="dibseasy-switch-checkout-screen">
+<div id="dibseasy-switch-checkout-screen">
      <form data-bind="attr:{'action': $data.checkoutUrl}">
          <button type="submit"  class="btn btn-outline-primary">Use other payment method</button>
      </form>
  </div>
 <!-- /ko -->
-</div>

@@ -23,7 +23,7 @@ define(['uiComponent',
            couponeIsApplied: this.checkout.coupone_is_applied,
            coupone_button_lable: '',
            couponeCode: '',
-           
+
            initialize: function () {
               this._super();
               var action = '';
@@ -42,18 +42,16 @@ define(['uiComponent',
                 this.checkoutUrl = this.checkout.checkout_url;
                 this.couponeAddUrl = this.checkout.coupon_apply_url;
                 this.couponeIsApplied = this.checkout.coupone_is_applied;
+                console.log(this.checkout.coupone_is_applied);
                 this.coupone_button_lable = this.checkout.coupone_is_applied ? 'Cancel Coupone' : 'Apply Discount';
                 this.couponeCode = this.checkout.coupone_code;
             },
-            
-           
-           
+
            updateView: function(params) {
              action = params.action;
              context = this;
              this.checkoutinit.freezeCheckout();
              loader.startLoader();
-        
              $.post(this.checkout.updateview_url , params ,function() {
              }).done(function(result) {
                 var parsed = JSON.parse(result);
@@ -90,12 +88,10 @@ define(['uiComponent',
                             }
                         });
                    }
-                
                      var arr = [];
                      $.each(parsed.shipping.methods, function( index, value){
                         arr.push({title: value.method_title, price: value.price, code: value.code, active: value.active});
                      });
-           
                    context.shippingMethods(arr);
                    
                    context.cartTotals(parsed.totals);
@@ -105,12 +101,9 @@ define(['uiComponent',
                    }
                    context.checkoutinit.thawCheckout();
                    loader.stopLoader();
-
              });
-             
-             
            },
-           
+
           shippingClick: function(item, event) {
                 context = this;  
                 $(".dibs-easy-shipping-selector").each(function() {
@@ -120,15 +113,15 @@ define(['uiComponent',
                 $(event.target).addClass("dibs-easy-active");
                 this.updateView({"action":"change_shipping", "method": $(event.target).attr("id")}); 
            },
-           
+
            cartProductInputFocusin : function(item, event) {
                 $(event.target).data('val', $(event.target).val());
            },
-           
+
            cartProductInputFocusout : function(item, event) {
                 this.validateQty($(event.target));
            },
-           
+
            cartProductRemove : function(item, event) {
                 var id = $(event.target).attr("id");
                 var ct = this;
@@ -145,23 +138,19 @@ define(['uiComponent',
                     }
                    });
            },
-      
-           validateQty: function (elem) {
+          validateQty: function (elem) {
             var itemQty = elem.data('val');
-
               if (!this.isValidQty(itemQty, elem.val())) {
                 elem.val(itemQty);
               } else {
                   this.updateView({"action":"update_qty", "id": elem.attr('id'), "qty": elem.val()});
               }
             },
-            
            isValidQty: function (origin, changed) {
             return origin != changed && //eslint-disable-line eqeqeq
                 changed.length > 0 &&
                 changed - 0 == changed && //eslint-disable-line eqeqeq
                 changed - 0 > 0;
             }
-
     });
 });

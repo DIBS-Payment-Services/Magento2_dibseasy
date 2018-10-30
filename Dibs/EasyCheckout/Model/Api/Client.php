@@ -79,7 +79,6 @@ class Client {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->getHeaders());
         if ('POST' === $method || 'PUT' === $method  && count($data) > 0) {
-            error_log(print_r($data, true));
             curl_setopt( $ch, CURLOPT_POST, true );
             curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
@@ -96,7 +95,6 @@ class Client {
     protected function prepareResponse($ch)
     {
         $result = curl_exec( $ch );
-        error_log(print_r($result, true));
         $code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
         $response = new Response($code, $result);
         if ($result === false) {

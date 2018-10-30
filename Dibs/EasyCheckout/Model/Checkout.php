@@ -520,7 +520,6 @@ class Checkout
             $result = ['result' => 'success', 'methods' => []];
         } else {
             $paymentId = $quote->getDibsEasyPaymentId();
-            
                     try {
                     $payment = $this->api->findPayment($paymentId);
                     $this->prepareQuoteShippingAddress($quote, $payment);
@@ -530,7 +529,6 @@ class Checkout
                     $address->collectShippingRates()->save();
                     $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
                     $quoteShippingMethodCode = $quote->getShippingAddress()->getShippingMethod();
-
                     // Set the first available shipping method 
                     if(empty($quoteShippingMethodCode) && !empty($shippingMethods)) {
                         $method = current($shippingMethods);
@@ -542,13 +540,11 @@ class Checkout
                             }
                         }
                     }
-
                     $methods = [];
                     foreach($shippingMethods as $method) {
                        $code = $method->getCarrierCode() . '_' . $method->getMethodCode();
                        $store = $this->storeManager->getStore();
                        $amountPrice = $store->getBaseCurrency()->convert($method->getAmount(), $store->getCurrentCurrencyCode());
-                      
                        ($quote->getShippingAddress()->getShippingMethod() == $code) ? $active = 1 : $active = 0;
                        $methods[$code] = ['carrier_title' => $method->getCarrierTitle(),
                                          'price' => $this->currency->format($amountPrice, array('symbol' => ''), false, false),
@@ -556,18 +552,14 @@ class Checkout
                                          'code' => $code,
                                          'active' => $active];
                      }
-                     
                     if($methods) {
                         $result = ['result' => 'success', 'methods' => $methods];
-            
                     }else {
                         $result = ['result' => 'error', 'error' => ['type' => 'no_methods', 'message' => 'No available shipping methods for this address']];
                     }
                     } catch(\Exception $e) {
                         $result = ['result' => 'error', 'error' => ['type' => 'exception', 'message' => $e->getMessage()]];
                     }
-            
-        
         }
      
        return $result;
