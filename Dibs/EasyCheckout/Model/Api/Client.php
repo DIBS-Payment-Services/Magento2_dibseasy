@@ -47,7 +47,8 @@ class Client {
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
-            'Authorization: '.$this->secretKey
+            'Authorization: '.$this->secretKey,
+            'commercePlatformTag: MG2Easy'
         ];
 
         return $headers;
