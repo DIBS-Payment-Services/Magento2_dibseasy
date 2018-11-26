@@ -16,17 +16,5 @@
                 <allowed_customer_types>B2C</allowed_customer_types>
             </dibs_easy_checkout>
         </payment>
-        <carriers>
-            <dibs_free_shipping>
-                <active>1</active>
-                <sallowspecific>0</sallowspecific>
-                <name>Fixed</name>
-                <price>0.00</price>
-                <type>I</type>
-                <handling_type>F</handling_type>
-                <model>Dibs\EasyCheckout\Model\Carrier\Free</model>
-                <title>Dibs Easy Free Shipping</title>
-            </dibs_free_shipping>
-        </carriers>
     </default>
 </config>
