@@ -50,7 +50,7 @@ define(['uiComponent',
            updateView: function(params) {
              action = params.action;
              context = this;
-             this.checkoutinit.freezeCheckout();
+             //this.checkoutinit.freezeCheckout();
              loader.startLoader();
              $.post(this.checkout.updateview_url , params ,function() {
              }).done(function(result) {
