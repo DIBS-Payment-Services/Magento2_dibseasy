@@ -38,6 +38,9 @@ define(['uiComponent',
                 this.checkoutinit.on('address-changed', function(address) {
                    ct.updateView({"action" : "change_address"});
                 });
+                this.checkoutinit.on('payment-completed', function(response) {
+                   window.location = ct.checkout.checkout_start_url + '?paymentId=' + response.paymentId;
+                });
                 this.updateView({"action" : "start"});
                 this.checkoutUrl = this.checkout.checkout_url;
                 this.couponeAddUrl = this.checkout.coupon_apply_url;
