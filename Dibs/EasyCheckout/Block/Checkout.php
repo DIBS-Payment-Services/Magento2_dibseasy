@@ -40,14 +40,16 @@ class Checkout extends Template
 
     protected $quoteIdMaskFactory;
     
+    protected $response;
+
     public function __construct(\Magento\Framework\View\Element\Template\Context $context,
                                 Config $config,
                                 \Magento\Checkout\Model\Session $checkoutSession,
                                 \Dibs\EasyCheckout\Model\Checkout $dibsCheckout,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 \Magento\Shipping\Model\Config $allmethods,
-                                \Magento\Directory\Model\Currency $currency
-    )
+                                \Magento\Directory\Model\Currency $currency,
+                                \Magento\Framework\App\Response\Http $response)
     {
         $this->dibsCheckout = $dibsCheckout;
         $this->config = $config;
@@ -55,6 +57,7 @@ class Checkout extends Template
         $this->messageManager = $messageManager;
         $this->allmethods = $allmethods;
         $this->currency = $currency;
+        $this->response = $response;
         parent::__construct($context);
     }
 
@@ -71,6 +74,8 @@ class Checkout extends Template
                  $this->dibsCheckout->createPaymentId($quote);
             } catch (\Exception $e) {
                 $this->_logger->error($e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->response->setRedirect($this->getUrl('checkout/cart'));
             }
 
         }

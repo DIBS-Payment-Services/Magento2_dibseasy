@@ -272,34 +272,24 @@ class Api
     public function getQuoteItems(Quote $quote)
     {
         $result = [];
-        $items = $quote->getAllItems();
+        $items = $quote->getAllVisibleItems();
         /** @var \Magento\Quote\Model\Quote\Item $item */
         foreach ($items as $item) {
-            if ($this->isNotChargeable($item)) {
-                continue;
-            }
             $result[] = $this->getOrderLineItem($item);
         }
-
         $shippingAddress = $quote->getShippingAddress();
         if ($shippingAddress->getShippingAmount() > 0) {
             $shippingReference = $shippingAddress->getShippingMethod();
             $shippingName = $shippingAddress->getShippingDescription();
             $result[] = $this->getShippingLine($shippingAddress, $shippingReference, $shippingName);
         }
-        
         $discountAmount = $quote->getShippingAddress()->getDiscountAmount();
-        
-        //if(abs($discountAmount)) {
-          //   $result[] = 
-        //}
-
         return $result;
     }
 
     public function getCarcItems(Quote $quote) {
         $result = [];
-        $items = $quote->getAllItems();
+        $items = $quote->getAllVisibleItems();
         /** @var \Magento\Quote\Model\Quote\Item $item */
         foreach ($items as $item) {
             if ($this->isNotChargeable($item)) {
@@ -455,7 +445,6 @@ class Api
      */
     protected function getItemGrossTotalAmount($item)
     {
-        error_log('$item->getDiscountAmount()' . $item->getTaxAmount());
         $itemGrossTotal = (double)$item->getRowTotal() + $item->getTaxAmount() - (double)abs($item->getDiscountAmount());
         $result = $this->getDibsIntVal($itemGrossTotal);
         return $result;

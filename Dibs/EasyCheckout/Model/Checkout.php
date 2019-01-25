@@ -740,7 +740,7 @@ class Checkout
     }
     
     public function getCartProducts() {
-         $items = $this->getQuote()->getAllItems();
+         $items = $this->getQuote()->getAllVisibleItems();
          $result = [];
          foreach($items as $item) {
              

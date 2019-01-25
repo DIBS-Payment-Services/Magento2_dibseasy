@@ -44,7 +44,7 @@ class CheckoutManager {
     public function removeCartItem($id) {
        $this->dibsCheckout->removeFromCart($id);
        
-       $items = $this->dibsCheckout->getQuote()->getAllItems();
+       $items = $this->dibsCheckout->getQuote()->getAllVisibleItems();
        
        if(count($items)) {
           $this->updateShippingMethod();
@@ -91,22 +91,11 @@ class CheckoutManager {
         $paymentService->update($paymentId, $result);
     }
     
-    protected function getSubtotal() {
-        
-    }
-    
     protected function getGrandTotal() {
         return $this->dibsCheckout->api->getDibsIntVal($this->dibsCheckout->getQuote()->getGrandTotal());
     }
     
-    protected function getShippingMethod() {
-        
-    }
-    
-    protected function getShippingMethods() {
-        
-    }
-    
+
     public function updateShippingMethod() {
         $quote = $this->dibsCheckout->getQuote();
         if(!$quote->isVirtual()) {
@@ -165,6 +154,6 @@ class CheckoutManager {
       } else {
           return true;
       }
-    
+
     }
 }

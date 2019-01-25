@@ -111,13 +111,14 @@ class Client {
         }
 
         if ($response->getCode() == 400) {
-            $errors = $response->getErrorMessages();
-            $errors = implode(' ', $errors);
-            throw new \Dibs\EasyCheckout\Model\Api\Exception\Response($errors, 400);
+            $errorMessage = implode(' ', $response->getErrorMessages());
+            if(!$errorMessage) $errorMessage = 'Api request error: 400. Bad Gateway';
+            throw new \Dibs\EasyCheckout\Model\Api\Exception\Response($errorMessage, 400);
         }
 
         if (!$response->getSuccess()) {
             $message = $response->getMessage();
+            if(!$message) $message = 'Api application error: 500';
             throw new \Dibs\EasyCheckout\Model\Api\Exception\Response($message, 500);
         }
 
