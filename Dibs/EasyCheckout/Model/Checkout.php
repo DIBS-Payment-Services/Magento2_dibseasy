@@ -1,6 +1,5 @@
 <?php
 namespace Dibs\EasyCheckout\Model;
-
 use Dibs\EasyCheckout\Model\Api\Response\Object\Payment;
 use Magento\Framework\Validator\EmailAddress;
 use Magento\Quote\Model\Quote;
@@ -68,17 +67,17 @@ class Checkout
     private $storeManager;
 
     protected $currency;
-    
+
     protected $quoteIdMaskFactory;
-    
+
     protected $shippingManagement;
-    
+
     protected $messageManager;
 
     protected $imageBuilder;
-    
+
     protected $imageHelper;
-    
+
     protected $totalsFactory;
 
     /**
@@ -113,13 +112,11 @@ class Checkout
                                 \Magento\Quote\Model\Quote\Address\RateRequestFactory $rateRequestFactory,
                                  StoreManagerInterface $storeManager = null,
                                 \Magento\Directory\Model\Currency $currency,
-                           
                                 \Magento\Quote\Model\ShippingMethodManagement $shippingManagement,
                                 \Magento\Framework\Message\ManagerInterface $messageManager,
                                 \Magento\Catalog\Block\Product\ImageBuilder $imageBuilder,
                                 \Magento\Catalog\Helper\Image $imageHelper,
                                 \Magento\Quote\Api\Data\TotalsInterfaceFactory $totalsFactory
-                             
     )
     {
         $this->api = $api;
@@ -143,7 +140,6 @@ class Checkout
         $this->imageBuilder = $imageBuilder;
         $this->imageHelper = $imageHelper;
         $this->totalsFactory = $totalsFactory;
-        
     }
 
     /**
@@ -159,8 +155,7 @@ class Checkout
             if (!$rate || $quote->getShippingAddress()->getShippingMethod() != $rate->getCode()){
                 //$this->updateShippingMethod($quote);
             }
-            
-            
+
         }
         $paymentId = $this->api->createPayment($this->getQuote());
         $this->checkoutSession->setDibsEasyPaymentId($paymentId);
@@ -342,7 +337,7 @@ class Checkout
         $this->quoteRepository->save($quote);
     }
 
-    
+
 
     /**
      * @param Quote $quote
@@ -415,15 +410,23 @@ class Checkout
         $country = $this->countryFactory->create()->loadByCode($paymentBillingAddress->getData('country'));
         $billingAddress = $quote->getBillingAddress();
         $billingRegionCode  = $paymentBillingAddress->getData('postalCode');
-        $billingAddress->setFirstname($payment->getPrivatePerson()->getData('firstName'));
-        $billingAddress->setLastname($payment->getPrivatePerson()->getData('lastName'));
+        if(!empty($payment->getCompany()->getName())) {
+            $contactDetails = $payment->getCompany()->getData('contactDetails');
+            $billingAddress->setFirstname($contactDetails['firstName']);
+            $billingAddress->setLastname($contactDetails['lastName']);
+            $billingAddress->setEmail($contactDetails['email']);
+            $billingAddress->setTelephone($contactDetails['phoneNumber']['prefix'] . $contactDetails['phoneNumber']['number']);
+            $billingAddress->setCompany($payment->getCompany()->getData('name'));
+        } else {
+            $billingAddress->setFirstname($payment->getPrivatePerson()->getData('firstName'));
+            $billingAddress->setLastname($payment->getPrivatePerson()->getData('lastName'));
+            $billingAddress->setEmail($payment->getEmail());
+            $billingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
+        }
         $billingAddress->setStreet($paymentBillingAddress->getStreetsArray());
         $billingAddress->setPostcode($paymentBillingAddress->getData('postalCode'));
         $billingAddress->setCity($paymentBillingAddress->getData('city'));
         $billingAddress->setCountryId($country->getCountryId());
-        $billingAddress->setEmail($payment->getEmail());
-        $billingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
-        $billingAddress->setCompany($payment->getCompany()->getData('name'));
         if ($billingRegionCode) {
             $billingRegionId = $this->regionFactory->create()->loadByCode($billingRegionCode, $billingAddress->getCountryId());
             $billingAddress->setRegionId($billingRegionId->getId());
@@ -438,24 +441,30 @@ class Checkout
      */
     protected function prepareQuoteShippingAddress(Quote $quote, Payment $payment)
     {
-        $country = $this->countryFactory->create()->loadByCode($payment->getShippingAddress()->getData('country'));
-        $shippingAddress = $quote->getShippingAddress();
-        $shippingAddress->setFirstname($payment->getPrivatePerson()->getData('firstName'));
-        $shippingAddress->setLastname($payment->getPrivatePerson()->getData('lastName'));
+         $country = $this->countryFactory->create()->loadByCode($payment->getShippingAddress()->getData('country'));
+         $shippingAddress = $quote->getShippingAddress();
+         if(!empty($payment->getCompany()->getName())) {
+            $contactDetails = $payment->getCompany()->getData('contactDetails');
+            $shippingAddress->setFirstname($contactDetails['firstName']);
+            $shippingAddress->setLastname($contactDetails['lastName']);
+            $shippingAddress->setEmail($contactDetails['email']);
+            $shippingAddress->setTelephone($contactDetails['phoneNumber']['prefix'] . $contactDetails['phoneNumber']['number']);
+         } else {
+            $shippingAddress->setFirstname($payment->getPrivatePerson()->getData('firstName'));
+            $shippingAddress->setLastname($payment->getPrivatePerson()->getData('lastName'));
+            $shippingAddress->setEmail($payment->getEmail());
+            $shippingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
+        }
         $shippingAddress->setStreet($payment->getShippingAddress()->getStreetsArray());
         $shippingAddress->setPostcode($payment->getShippingAddress()->getData('postalCode'));
         $shippingAddress->setCity($payment->getShippingAddress()->getData('city'));
         $shippingAddress->setCountryId($country->getCountryId());
-        $shippingAddress->setEmail($payment->getEmail());
-        $shippingAddress->setTelephone($payment->getPrivatePerson()->getTelephone());
         $shippingAddress->setCompany($payment->getCompany()->getData('name'));
         $shippingRegionCode = $payment->getShippingAddress()->getData('postalCode');
-
         if ($shippingRegionCode) {
             $shippingRegionId = $this->regionFactory->create()->loadByCode($shippingRegionCode, $shippingAddress->getCountryId());
             $shippingAddress->setRegionId($shippingRegionId->getId());
         }
-
         $shippingAddress->setShouldIgnoreValidation(true);
     }
 
@@ -474,7 +483,6 @@ class Checkout
             $address->collectShippingRates()->save();
             $shippingMethods = $this->getShippingMethodsBasedOnAddress($payment);
             $quoteShippingMethodCode = $quote->getShippingAddress()->getShippingMethod();
-
             // Set the first available shipping method 
             if(empty($quoteShippingMethodCode) && !empty($shippingMethods)) {
                 $method = current($shippingMethods);
@@ -488,7 +496,6 @@ class Checkout
                 $this->setSippingMethod($shippingMethodCode);
                 $this->updateCartShipping($shippingMethodCode);
             }
-
             $return = [];
             foreach($shippingMethods as $method) {
                $code = $method->getCarrierCode() . '_' . $method->getMethodCode();
@@ -502,7 +509,6 @@ class Checkout
                                  'code' => $code,
                                  'active' => $active];
              }  
-             
           if($return) {
              $return = ['result' => 'success', 'methods' => $return];
             
@@ -512,8 +518,7 @@ class Checkout
         }
        return json_encode($return);
     }
-    
-    
+
     public function getShippingMethodsManager() {
         $quote = $this->getQuote();
         if($quote->isVirtual()) {
@@ -561,10 +566,10 @@ class Checkout
                         $result = ['result' => 'error', 'error' => ['type' => 'exception', 'message' => $e->getMessage()]];
                     }
         }
-     
+
        return $result;
     }
-    
+
     public function getShippingMethodsBasedOnAddress($payment) {
         $shippingAddress =  $this->getQuote()->getShippingAddress();
         $country = $this->countryFactory->create()->loadByCode($payment->getShippingAddress()->getData('country'));
@@ -648,7 +653,7 @@ class Checkout
            return json_encode($result);
         }
     }
-    
+
     public function updateCartItemQty($itemId, $itemQty) {
        $buyRequest= ['qty' => $itemQty];
        $quote = $this->getQuote();
@@ -696,7 +701,7 @@ class Checkout
         $result[] = ['id'=>'grand_total', 'title'=> __('Grand Total'), 'value'=>$currency.$this->currency->format($grandTotal, array('symbol'=>''), false, false)];
         return json_encode($result);
     }
-    
+
     public function getCartTotalsManager() {
         $quote = $this->getQuote();
         $subtotal = $this->getQuote()->getSubtotal();
@@ -721,7 +726,7 @@ class Checkout
         if($shippingCode) {
            $result[] = ['id'=>'shipping', 'title'=> __('Shipping'), 'value' => /*$res['carrier_name']*/ $quote->getShippingAddress()->getShippingDescription() ]; 
         }
-       
+
         $grandTotalWithoutDiscount = $this->getQuote()->getGrandTotal();// - abs($discountAmount);
         $grandTotalHtml = '<span id="dibs-easy-grand-total-currency">'. $currency . '</span>' . 
                           '<span id="dibs-easy-grand-total-value">' . 
@@ -738,7 +743,7 @@ class Checkout
         $this->prepareQuoteBillingAddress($quote, $payment);
         $this->quoteRepository->save($quote);
     }
-    
+
     public function getCartProducts() {
          $items = $this->getQuote()->getAllVisibleItems();
          $result = [];
@@ -756,7 +761,7 @@ class Checkout
          }
          return $result;
     }
-    
+
     protected function getItemDisplayPriceExclTax($item)
     {
         if ($item instanceof QuoteItem) {
@@ -765,7 +770,7 @@ class Checkout
             return $item->getPrice();
         }
     }
-    
+
     protected function getImageHtml($product, $imageId, $attributes = []) {
     
     return $this->imageBuilder->setProduct($product)
